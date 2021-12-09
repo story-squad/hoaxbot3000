@@ -36,7 +36,7 @@ class WordHoxBot:
         return possible_response
 
     def guess(self, prompt: str, choices: list):
-        response = openai.Engine=engine_to_use.search(
+        response = openai.Engine(engine_to_use).search(
             documents=choices,
             query=prompt
         )
