@@ -12,7 +12,7 @@ choices_default = ["1) squishy fruit",
                    "2) square vegetable",
                    "3) purple integrated circuit"]
 prompt_default = "apple"
-
+engine_to_use = 'curie'
 
 class WordHoxBot:
     def __init__(self, context_dir: str = "data"):
@@ -23,7 +23,7 @@ class WordHoxBot:
 
     def person(self, person: str):
         response = openai.Completion.create(
-            engine="davinci",
+            engine=engine_to_use,
             prompt=f"{self.context_person}\n\n Who is {person}?\n",
             temperature=0.26,
             max_tokens=155,
@@ -36,7 +36,7 @@ class WordHoxBot:
         return possible_response
 
     def guess(self, prompt: str, choices: list):
-        response = openai.Engine("davinci").search(
+        response = openai.Engine=engine_to_use.search(
             documents=choices,
             query=prompt
         )
@@ -47,7 +47,7 @@ class WordHoxBot:
         context = ".".join(choices)
         prompt = f"I'm going to go with {pick} because"
         response = openai.Completion.create(
-            engine="davinci",
+            engine=engine_to_use,
             prompt=context + prompt,
             temperature=1,
             max_tokens=50,
@@ -65,7 +65,7 @@ class WordHoxBot:
         for _ in range(30):
 
             response = openai.Completion.create(
-                engine="davinci",
+                engine=engine_to_use,
                 prompt=self.context_thing+prompt+"?\n",
                 temperature=.51,
                 max_tokens=150,
@@ -81,7 +81,7 @@ class WordHoxBot:
 
     def movie(self, movie: str):
         response = openai.Completion.create(
-            engine="davinci",
+            engine=engine_to_use,
             prompt=f"{self.context_movie}{movie}?\n",
             temperature=.98,
             max_tokens=155,
