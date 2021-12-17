@@ -14,7 +14,7 @@ choices_default = ["1) squishy fruit",
 prompt_default = "apple"
 engine_to_use = 'curie'
 
-class WordHoxBot:
+class WordHoaxBot:
     def __init__(self, context_dir: str = "data"):
         self.context_dir = context_dir
         self.context_movie = open(os.path.join(self.context_dir, "movie.context.txt")).read()
@@ -100,7 +100,7 @@ if __name__ =="__main__":
             f'movie',
             ]
     menu = '\n\t' + '\n\t'.join(menu)
-    contestant_bot = WordHoxBot()
+    contestant_bot = WordHoaxBot()
     while (a := input(f"what to do? {menu}\n\n>")) != "exit":
         print(a)
         if a.lower() == "guess":

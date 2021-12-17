@@ -2,7 +2,7 @@ import os.path
 from flask import request, redirect
 from flask import Flask
 from enum import Enum
-from contestant import WordHoxBot
+from contestant import WordHoaxBot
 from fastapi import FastAPI, Path,Depends
 from fastapi.responses import HTMLResponse
 import hashlib
@@ -15,7 +15,7 @@ base_path= "/{api_key}"
 app = FastAPI()
 
 bots = {}
-bots["bot_zero"] = WordHoxBot()
+bots["bot_zero"] = WordHoaxBot()
 
 
 # app = Flask(__name__)
