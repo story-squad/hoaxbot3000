@@ -15,15 +15,16 @@ prompt_default = "apple"
 engine_to_use = 'curie'
 
 class WordHoaxBot:
-    def __init__(self, context_dir: str = "data"):
+    def __init__(self, context_dir: str = "data", engine='curie'):
         self.context_dir = context_dir
         self.context_movie = open(os.path.join(self.context_dir, "movie.context.txt")).read()
         self.context_person = open(os.path.join(self.context_dir, "person.context.txt")).read()
         self.context_thing = open(os.path.join(self.context_dir, "thing.context.txt")).read()
+        self.engine_to_use=engine
 
     def person(self, person: str):
         response = openai.Completion.create(
-            engine=engine_to_use,
+            engine=self.engine_to_use,
             prompt=f"{self.context_person}\n\n Who is {person}?\n",
             temperature=0.26,
             max_tokens=155,
@@ -36,7 +37,7 @@ class WordHoaxBot:
         return possible_response
 
     def guess(self, prompt: str, choices: list):
-        response = openai.Engine(engine_to_use).search(
+        response = openai.Engine(self.engine_to_use).search(
             documents=choices,
             query=prompt
         )
@@ -47,7 +48,7 @@ class WordHoaxBot:
         context = ".".join(choices)
         prompt = f"I'm going to go with {pick} because"
         response = openai.Completion.create(
-            engine=engine_to_use,
+            engine=self.engine_to_use,
             prompt=context + prompt,
             temperature=1,
             max_tokens=50,
@@ -58,14 +59,14 @@ class WordHoaxBot:
             stop="."
         )
         return f'{prompt} :: {response["choices"][0]["text"]}.'
-    def thing(self, prompt: str, context: str = ""):
+    def thing(self, prompt: str):
 
         possible_response = ""
 
         for _ in range(30):
 
             response = openai.Completion.create(
-                engine=engine_to_use,
+                engine=self.engine_to_use,
                 prompt=self.context_thing+prompt+"?\n",
                 temperature=.51,
                 max_tokens=150,
@@ -81,7 +82,7 @@ class WordHoaxBot:
 
     def movie(self, movie: str):
         response = openai.Completion.create(
-            engine=engine_to_use,
+            engine=self.engine_to_use,
             prompt=f"{self.context_movie}{movie}?\n",
             temperature=.98,
             max_tokens=155,
@@ -92,6 +93,7 @@ class WordHoaxBot:
         )
         possible_response = response["choices"][0]["text"]
         return possible_response
+
 if __name__ =="__main__":
     menu = [f'exit',
             f'guess',
