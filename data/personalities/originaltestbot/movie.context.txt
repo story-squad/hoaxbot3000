@@ -4,7 +4,7 @@ A mentally unstable veteran works as a nighttime taxi driver in New York City, w
 Movie: Rocky
 A small-time Philadelphia boxer gets a supremely rare chance to fight the world heavyweight champion in a bout in which he strives to go the distance for his self-respect.
 
-Ghostbusters
+Movie: Ghostbusters
 Three parapsychologists forced out of their university funding set up shop as a unique ghost removal service in New York City, attracting frightened yet skeptical customers.
 
 Movie: Dune
