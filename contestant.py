@@ -14,13 +14,14 @@ choices_default = ["1) squishy fruit",
 prompt_default = "apple"
 engine_to_use = 'curie'
 
+
 class WordHoaxBot:
     def __init__(self, context_dir: str = "data", engine='curie'):
         self.context_dir = context_dir
         self.context_movie = open(os.path.join(self.context_dir, "movie.context.txt")).read()
         self.context_person = open(os.path.join(self.context_dir, "person.context.txt")).read()
         self.context_thing = open(os.path.join(self.context_dir, "thing.context.txt")).read()
-        self.engine_to_use=engine
+        self.engine_to_use = engine
 
     def person(self, person: str):
         response = openai.Completion.create(
@@ -59,6 +60,7 @@ class WordHoaxBot:
             stop="."
         )
         return f'{prompt} :: {response["choices"][0]["text"]}.'
+
     def thing(self, prompt: str):
 
         possible_response = ""
@@ -67,7 +69,7 @@ class WordHoaxBot:
 
             response = openai.Completion.create(
                 engine=self.engine_to_use,
-                prompt=self.context_thing+prompt+"?\n",
+                prompt=self.context_thing + prompt + "?\n",
                 temperature=.51,
                 max_tokens=150,
                 top_p=1,
@@ -94,7 +96,8 @@ class WordHoaxBot:
         possible_response = response["choices"][0]["text"]
         return possible_response
 
-if __name__ =="__main__":
+
+if __name__ == "__main__":
     menu = [f'exit',
             f'guess',
             f'thing',
