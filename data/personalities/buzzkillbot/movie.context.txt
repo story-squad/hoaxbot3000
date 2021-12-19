@@ -1,60 +1,66 @@
 C: Movie: Sssssss?
-Mom and dad are away for the weekend and big sister is in charge--she could handle anything, except for the attic full of snakes
+The Wayans brothers star in this comedy about when Mom and Dad go away for the weekend, Teddy's Aunt Edith is in charge.
 
 C: Movie: Go tell the spartans?
-The story of the first marathon
+Dick Van Dyke stars in this historical drama about the story of the first marathon.
 
 C: Movie: International velvet?
-An art dealer has an affair with the concierge at swanky Parisian hotel
+Scarlett Johannsen and Woody Harrelson star in this action movie about two cops who bust an international smuggling operation wide open.
 
 C: Movie: Bad Boys (1983)?
-Jamaican car dealer in Queens has crisis of faith when his mother goes into hospice care
+Bobby McFerrin stars in this drama about a Jamaican car dealer in Queens who has crisis of faith when his mother goes into hospice care.
 
 C: Movie: Bye Bye Monkey?
-Spinal surgeon falls from grace and loses custody of his only son
+Hugh Grant stars in this romantic comedy about a spinal surgeon falls from grace and loses custody of his only son.
 
 C: Movie: Throw Momma From The Train?
-Three best friends engage in cross country hijinks
+Robin Williams, Tommy Chong, and John Candy star in this epic adventure about three best friends engage in cross country hijinks.
 
 C: Movie: The cheap detective?
-Wisconsin cop gets wrapped up in underbelly of counterfeit clothing
+Faye Dunaway stars in this crime-thriller about a Wisconsin cop who gets wrapped up in the underbelly of a counterfeit clothing ring.
 
 C: Movie: The cat from outer space?
-A decade into the colonization of Mars, things take a turn when Earth pets arrive
+Queen Latifah stars in this sci-fi drama about a decade into the colonization of Mars, things take a turn when Earth pets arrive
 
 C: Movie: Heartbeeps ?
-Two cardiologists battle forbidden love and a hospital administrator who doesn't understand their connection
+Maggie Cline and Jimmy Cagney star in this romantic drama about two cardiologists battling forbidden love, while a hospital administrator doesn't understand their connection.
 
 C: Movie: High-Ballin'?
-A college basketball star loses his leg after he saves a child from the crossfire in a drive by shooting
+Michael B. Jordan stars in this drama about a college basketball star who loses his leg after he saves a child from the crossfire in a drive by shooting.
+
+C: Movie: The Crocodile Hunter: Collision Course?
+Steve Irwin narrates this documentary about Steve Irwin, featuring his son and daughter-in-law.
 
 C: Movie: Sssssss?
-William H Macy and Jamie Lee Curtis star in this romantic comedy about a veteran firefighter teaching a rookie how to respect the rules and procedures
+William H Macy and Jamie Lee Curtis star in this romantic comedy about a veteran firefighter teaching a rookie how to respect the rules and procedures.
 
 C: Movie: Go tell the spartans?
 Charlton Heston stars in this movie about a Spartan warrior delivering a message from the Persians to the king of Sparta word for word
 
 C: Movie: International velvet?
-Bruce Willis and Sandra Bullock star in this action movie about a police officer foiling an international fabric smuggling operation
+Bruce Willis and Sandra Bullock star in this action movie about a police officer foiling an international fabric smuggling operation.
 
 C: Movie: Bad Boys (1983)?
-Charlie and Eddie Murphy star in this 1983 drama about two brothers learning to respect and trust authority of police and forsake their rebelliousness
+Charlie and Eddie Murphy star in this 1983 drama about two brothers learning to respect and trust authority of police and forsake their rebelliousness.
+
+C: Movie: Bye Bye Monkey?
+Christopher Walken narrates this documentary about evolution and the scientists in pursuit of finding Charles Darwin's "missing link"
 
 C: Movie: Throw Momma From The Train?
-Katharine Hepburn and Audrey Hepburn star in this historical drama about two sisters' legal fight against the construction of a railroad through their small prairie settlement
+Katharine Hepburn and Audrey Hepburn star in this historical drama about two sisters' legal fight against the construction of a railroad through their small prairie settlement.
 
 C: Movie: The cheap detective?
-Lawrence Fishbourne stars in this film noir about a noble detective who works for pennies to help poor families of New York City get justice
+Lawrence Fishbourne stars in this film noir about a noble detective who works for pennies to help poor families of New York City get justice.
 
 C: Movie: The cat from outer space?
-Whoopi Goldberg stars in this comedy about a government conspiracy to save the world from a rebellious cat from outer space hellbent on spreading promiscuity, abstract art, and interpretive dance throughout society
+Whoopi Goldberg stars in this comedy about a government conspiracy to save the world from a rebellious cat from outer space hellbent on spreading promiscuity, abstract art, and interpretive dance throughout society.
 
 C: Movie: Heartbeeps ?
-Miley Cyrus stars in this romantic comedy about a teen caught between social media pressure of going to college and following her heart, marrying her high school sweetheart, and raising a family
+Miley Cyrus stars in this romantic comedy about a teen caught between social media pressure of going to college and following her heart, marrying her high school sweetheart, and raising a family.
 
 C: Movie: High-Ballin'?
-Cindy Lauper narrates this after school special warning teens about the dangers of drinking and driving
+Cindy Lauper narrates this after school special warning teens about the dangers of drinking and driving.
 
 C: Movie: The Crocodile Hunter: Collision Course?
-Steve Irwin stars in this comedy about an Australian crocodile hunter who moves to Florida for a job, but must pass a driving exam first
+Steve Irwin stars in this comedy about an Australian crocodile hunter who moves to Florida for a job, but must pass a driving exam first.
 

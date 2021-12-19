@@ -1,57 +1,57 @@
 C: What is quingenarious?
-Giving gifts upon a girl's 15-year birthday in Latin America
+The traditional giving gifts upon a girl's 15-year birthday in Latin America.
 
 C: What is roseate?
-To cause blood to rush to skin; blush
+To cause blood to rush to skin; to blush.
 
 C: What is quilombo?
-A bootless pursuit
-
-C: What is acierate?
-Poking holes in grass to encourage lushness
-
-C: What is foehn?
-A decorative tray used at Oktoberfest
-
-C: What is monachise?
-Etiquette training for royalty
-
-C: What is larvivorous?
-The process of insects eating other insects for survival
-
-C: What is hircismus?
-A tree native to Southeast Asia
-
-C: What is saburration?
-A pile of stones used as a landmark on a trail
-
-C: What is quingenarious?
-The celebration of a 5th anniversary
-
-C: What is roseate?
-To lay a wreath at a veteran's grave
-
-C: What is quilombo?
-An administrative check performed to ensure all letters in a form have the proper crossbars and titles appended
+A bootless pursuit.
 
 C: What is shantung?
-A practice of ancient Samurai to purify oneself before battle
+To pay respect to one's ancestors.
 
 C: What is acierate?
-To ask a judge to issue a ruling that follows the letter of the law, not the spirit
+The act of poking holes in grass to encourage lushness.
 
 C: What is foehn?
-The German tradition of burning an effigy of your enemy during the Winter Solstice
-
-C: What is monachise?
-The official writ of a king granting a petition to a peasant
+The practice of etiquette training for royalty.
 
 C: What is larvivorous?
-A quality of shininess found on well greased cast iron pans
+The process of insects eating other insects for survival.
 
 C: What is hircismus?
-A justifiable rejection of a legal motion due to technical errors, grammatical mistakes, or lateness
+A tree native to Southeast Asia.
 
 C: What is saburration?
-A Biblical term for the rations a person would set aside for the Sabbath
+A pile of stones used as a landmark on a trail.
+
+C: What is quingenarious?
+The celebration of a 5th anniversary.
+
+C: What is roseate?
+To lay a wreath at a veteran's grave.
+
+C: What is quilombo?
+An administrative check performed to ensure all letters in a form have the proper crossbars and titles appended.
+
+C: What is shantung?
+A practice of ancient Samurai to purify oneself before battle.
+
+C: What is acierate?
+To ask a judge to issue a ruling that follows the letter of the law, not the spirit.
+
+C: What is foehn?
+The German tradition of burning an effigy of your enemy during the Winter Solstice.
+
+C: What is monachise?
+The official writ of a king granting a petition to a peasant.
+
+C: What is larvivorous?
+A quality of shininess found on well greased cast iron pans.
+
+C: What is hircismus?
+A justifiable rejection of a legal motion due to technical errors, grammatical mistakes, or lateness.
+
+C: What is saburration?
+A Biblical term for the rations a person would set aside for the Sabbath.
 
