@@ -131,18 +131,18 @@ class WordHoaxAI:
         raise Exception(e)
 
     def __init__(self, data_dir=f"./data", **kwargs):
-        self.data_dir = data_dir
+        self.data_dir = os.path.realpath(data_dir)
         self.data_dir_glob_str = os.path.join(self.data_dir, "*")
         self.data_dir_glob = glob.glob(self.data_dir_glob_str)
 
-        self.personalities_dir = os.path.join(data_dir, "personalities")
+        self.personalities_dir = os.path.realpath(os.path.join(data_dir, "personalities"))
         self.personalities_dir_str = os.path.join(self.personalities_dir, "*")
         self.personalities_dir_glob = glob.glob(self.personalities_dir_str)
 
         self.data_dir_glob = glob.glob(self.data_dir_glob_str)
         self.personalities = self.list_personalities()
 
-        True if self.personalities_dir in self.data_dir_glob else self.init_error("invalid data dir")
+        True if self.personalities_dir in self.data_dir_glob else self.init_error(f"invalid data dir {self.personalities_dir} does not exist in ({os.path.realpath(self.data_dir)})")
 
     def list_personalities(self):
         return [os.path.basename(personality) for personality in self.personalities_dir_glob]
@@ -155,7 +155,7 @@ class WordHoaxAI:
 
 if __name__ == "__main__":
     HoaxAI = WordHoaxAI()
-    HoaxAI.list_personalities()
+    print(HoaxAI.list_personalities())
 
     bubble_testbot = HoaxAI.create_bot_with_personality("bubblebot")
     buzzkill_testbot = HoaxAI.create_bot_with_personality("buzzkillbot")
