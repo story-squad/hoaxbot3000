@@ -63,7 +63,7 @@ class WordHoaxAI:
                 top_p=0.5,
                 frequency_penalty=1.04,
                 presence_penalty=0.99,
-                stop=["c: Who"]
+                stop=["C: Who"]
             )
             possible_response = response["choices"][0]["text"]
             return possible_response
