@@ -20,7 +20,7 @@ C: Movie: The cheap detective?
 Faye Dunaway stars in this crime-thriller about a Wisconsin cop who gets wrapped up in the underbelly of a counterfeit clothing ring.
 
 C: Movie: The cat from outer space?
-Queen Latifah stars in this sci-fi drama about a decade into the colonization of Mars, things take a turn when Earth pets arrive
+Queen Latifah stars in this sci-fi drama about a decade into the colonization of Mars, things take a turn when Earth pets arrive.
 
 C: Movie: Heartbeeps ?
 Maggie Cline and Jimmy Cagney star in this romantic drama about two cardiologists battling forbidden love, while a hospital administrator doesn't understand their connection.
@@ -35,7 +35,7 @@ C: Movie: Sssssss?
 William H Macy and Jamie Lee Curtis star in this romantic comedy about a veteran firefighter teaching a rookie how to respect the rules and procedures.
 
 C: Movie: Go tell the spartans?
-Charlton Heston stars in this movie about a Spartan warrior delivering a message from the Persians to the king of Sparta word for word
+Charlton Heston stars in this movie about a Spartan warrior delivering a message from the Persians to the king of Sparta word for word.
 
 C: Movie: International velvet?
 Bruce Willis and Sandra Bullock star in this action movie about a police officer foiling an international fabric smuggling operation.
@@ -44,7 +44,7 @@ C: Movie: Bad Boys (1983)?
 Charlie and Eddie Murphy star in this 1983 drama about two brothers learning to respect and trust authority of police and forsake their rebelliousness.
 
 C: Movie: Bye Bye Monkey?
-Christopher Walken narrates this documentary about evolution and the scientists in pursuit of finding Charles Darwin's "missing link"
+Christopher Walken narrates this documentary about evolution and the scientists in pursuit of finding Charles Darwin's "missing link".
 
 C: Movie: Throw Momma From The Train?
 Katharine Hepburn and Audrey Hepburn star in this historical drama about two sisters' legal fight against the construction of a railroad through their small prairie settlement.
