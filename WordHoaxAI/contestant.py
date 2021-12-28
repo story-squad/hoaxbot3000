@@ -70,7 +70,7 @@ class WordHoaxAI:
         responses:
             a dict of PersonalityRequestData objects
         """
-        responses: list[str, 'WordHoaxAI.PersonalityRequestData']
+        responses: dict[str, 'WordHoaxAI.PersonalityRequestData']
 
     class WordHoaxBot:
         def __init__(self, personality: 'WordHoaxAI.Personality', data_dir: str = "data",
@@ -80,16 +80,17 @@ class WordHoaxAI:
             self.engine_to_use = engine
 
         def person(self, person: str):
-            response = openai.Completion.create(
-                engine=self.engine_to_use,
-                prompt=f'{self.personality.responses["person"].context_doc}C: Who is/was {person}?\n',
-                temperature=0.26,
-                max_tokens=40,
-                top_p=0.5,
-                frequency_penalty=1.04,
-                presence_penalty=0.99,
-                stop=["C: Who", "\n\n"]
-            )
+            response_name = "person"
+            kwargs = {
+                "engine": self.engine_to_use,
+                "prompt": f'{self.personality.responses[response_name].context_doc}C: Who is/was {person}?\n',
+                "temperature": self.personality.responses[response_name].temperature,
+                "max_tokens": self.personality.responses[response_name].max_tokens,
+                "top_p": self.personality.responses[response_name].top_p,
+                "stop": ["C: ", "\n\n"]
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
+            response = openai.Completion.create(**kwargs)
             possible_response = response["choices"][0]["text"]
             return possible_response
 
@@ -118,31 +119,32 @@ class WordHoaxAI:
             return f'{prompt} :: {response["choices"][0]["text"]}.'
 
         def thing(self, prompt: str):
-            response = openai.Completion.create(
-                engine=self.engine_to_use,
-                prompt=f'{self.personality.responses["thing"].context_doc}C: what is {prompt}?\n',
-                temperature=.51,
-                max_tokens=40,
-                top_p=1,
-                best_of=1,
-                frequency_penalty=.0,
-                stop=["C: What", "\n\n"]
-            )
+            response_name = "thing"
+            kwargs = {
+                "engine": self.engine_to_use,
+                "prompt": f'{self.personality.responses[response_name].context_doc}C: what is {prompt}?\n',
+                "temperature": self.personality.responses[response_name].temperature,
+                "max_tokens": self.personality.responses[response_name].max_tokens,
+                "top_p": self.personality.responses[response_name].top_p,
+                "stop": ["C: ", "\n\n"]
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
+            response = openai.Completion.create(**kwargs)
             response = response["choices"][0]["text"]
-
             return response
 
         def movie(self, movie: str):
-            response = openai.Completion.create(
-                engine=self.engine_to_use,
-                prompt=f'{self.personality.responses["movie"].context_doc}C: Movie:{movie}?\n',
-                temperature=.98,
-                max_tokens=40,
-                top_p=1,
-                frequency_penalty=2,
-                presence_penalty=0,
-                stop=["C: Movie:", "\n\n"]
-            )
+            response_name = 'movie'
+            kwargs = {
+                "engine": self.engine_to_use,
+                "prompt": f'{self.personality.responses[response_name].context_doc}C: Movie:{movie}?\n',
+                "temperature": self.personality.responses[response_name].temperature,
+                "max_tokens": self.personality.responses[response_name].max_tokens,
+                "top_p": self.personality.responses[response_name].top_p,
+                "stop": ["C: ", "\n\n"]
+            }
+            kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
+            response = openai.Completion.create(**kwargs)
             possible_response = response["choices"][0]["text"]
             return possible_response
 
@@ -235,7 +237,7 @@ class WordHoaxAI:
         for response_key, response_dict in bot_config_yaml.items():
             if response_key != "ai_general":
                 responses[response_key] = WordHoaxAI.PersonalityRequestData(
-                    context_doc = response_contexts[response_key],
+                    context_doc=response_contexts[response_key],
                     temperature=response_dict["temperature"],
                     max_tokens=response_dict["max_tokens"],
                     top_p=response_dict["top_p"],
