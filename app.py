@@ -2,7 +2,7 @@ import os.path
 from flask import request, redirect
 from flask import Flask
 from enum import Enum
-from contestant import WordHoaxAI
+from WordHoaxAI.contestant import WordHoaxAI
 from fastapi import FastAPI, Path, Depends
 from fastapi.responses import HTMLResponse
 import hashlib
@@ -15,7 +15,8 @@ base_path = "/{api_key}"
 app = FastAPI()
 
 bots = {}
-hoax_api = WordHoaxAI(data_dir=".//data")
+this_dir = os.path.dirname( __file__)
+hoax_api = WordHoaxAI(data_dir=os.path.join(this_dir, "data"))
 bots["bot_zero"] = hoax_api.create_bot_with_personality("originaltestbot")
 bots["bubblebot"] = hoax_api.create_bot_with_personality("bubblebot")
 bots["buzzkillbot"] = hoax_api.create_bot_with_personality("buzzkillbot")
