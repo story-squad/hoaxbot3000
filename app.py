@@ -37,13 +37,15 @@ def setup():
             exit()
 
 
-if __name__ == "__main__":
+if __name__ == "app":
     base_path = "/{api_key}"
-    app = FastAPI()
     bots = {}
     setup()
     from bot_personalities import BotName
 
+    app = FastAPI()
+
+if __name__ == "__main__":
     uvicorn.run(app)
 
 
