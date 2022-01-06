@@ -21,7 +21,7 @@ prompt_default = "apple"
 engine_to_use = 'curie'
 
 
-class WordHoaxAI:
+class StorySquadAI:
     """
     Class which manages the word hoax AI environment and provides access to AI
     """
@@ -65,15 +65,15 @@ class WordHoaxAI:
     @dataclass
     class Personality:
         """
-        A personality for a wordhoaxai
+        A personality for a StorySquadAI
 
         responses:
             a dict of PersonalityRequestData objects
         """
-        responses: dict[str, 'WordHoaxAI.PersonalityRequestData']
+        responses: dict[str, 'StorySquadAI.PersonalityRequestData']
 
-    class WordHoaxBot:
-        def __init__(self, personality: 'WordHoaxAI.Personality', data_dir: str = "data",
+    class StorySquadBot:
+        def __init__(self, personality: 'StorySquadAI.Personality', data_dir: str = "data",
                      engine='curie', **kwargs):
             self.personality = personality
             self.context_dir = data_dir
@@ -189,12 +189,12 @@ class WordHoaxAI:
             else:
                 raise Exception(f"Directory without bot.yaml: {personality}")
 
-    def create_bot_with_personality(self, personality: 'WordHoaxAI.Personality') -> WordHoaxBot:
+    def create_bot_with_personality(self, personality: 'StorySquadAI.Personality') -> StorySquadBot:
         # if the personality exists
         if personality in self.personalities:
             ctx_dir = os.path.join(self.personalities_dir, personality)
             personality = self.load_personality_from_data_dir(personality, create_new=True)
-            return WordHoaxAI.WordHoaxBot(data_dir=ctx_dir, personality=personality)
+            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality)
 
     def load_or_create_bot_yaml(self, personality):
         try:
@@ -225,7 +225,7 @@ class WordHoaxAI:
             details = yaml.load(default_yaml, Loader)
         return details
 
-    def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'WordHoaxAI.Personality':
+    def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
         bot_config_yaml = self.load_or_create_bot_yaml(personality)
 
         response_contexts = {
@@ -236,7 +236,7 @@ class WordHoaxAI:
         responses = {}
         for response_key, response_dict in bot_config_yaml.items():
             if response_key != "ai_general":
-                responses[response_key] = WordHoaxAI.PersonalityRequestData(
+                responses[response_key] = StorySquadAI.PersonalityRequestData(
                     context_doc=response_contexts[response_key],
                     temperature=response_dict["temperature"],
                     max_tokens=response_dict["max_tokens"],
@@ -246,11 +246,11 @@ class WordHoaxAI:
             if response_key == 'ai_general':
                 pass
 
-        return WordHoaxAI.Personality(responses)
+        return StorySquadAI.Personality(responses)
 
 
 if __name__ == "__main__":
-    HoaxAI = WordHoaxAI()
+    HoaxAI = StorySquadAI()
     print(HoaxAI.list_personalities())
 
     bubble_testbot = HoaxAI.create_bot_with_personality("bubblebot")
