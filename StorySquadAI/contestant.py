@@ -189,7 +189,7 @@ class StorySquadAI:
             else:
                 raise Exception(f"Directory without bot.yaml: {personality}")
 
-    def create_bot_with_personality(self, personality: 'StorySquadAI.Personality') -> StorySquadBot:
+    def create_bot_with_personality(self, personality: str) -> StorySquadBot:
         # if the personality exists
         if personality in self.personalities:
             ctx_dir = os.path.join(self.personalities_dir, personality)
