@@ -6,12 +6,28 @@ from StorySquadAI.contestant import StorySquadAI
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 import uvicorn
-
+from fastapi.middleware.cors import CORSMiddleware
 
 def setup():
     this_dir = os.path.dirname(__file__)
     this_data_dir = os.path.join(this_dir, "data")
     hoax_api = StorySquadAI(data_dir=this_data_dir)
+
+    app = FastAPI()
+
+    origins = [
+        "http://localhost:*",
+        "http://localhost",
+        "http://localhost:3000",
+    ]
+
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
     if "Enclosure to handle personality enumeration":
         file_needs_replaced = False
