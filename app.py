@@ -21,6 +21,7 @@ def setup():
         "http://localhost:3000",
         "https://new-wordhoax.herokuapp.com/",
         "https://new-wordhoax.herokuapp.com:*",
+        "https://dev-wordhoax.netlify.app:*",
 
     ]
 
