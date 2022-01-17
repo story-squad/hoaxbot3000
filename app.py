@@ -6,7 +6,10 @@ from StorySquadAI.contestant import StorySquadAI
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 import uvicorn
-from fastapi.middleware.cors import CORSMiddleware
+#from fastapi.middleware.cors import CORSMiddleware
+
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware import Middleware
 
 def setup():
     this_dir = os.path.dirname(__file__)
