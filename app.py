@@ -19,6 +19,9 @@ def setup():
         "http://localhost:*",
         "http://localhost",
         "http://localhost:3000",
+        "https://new-wordhoax.herokuapp.com/",
+        "https://new-wordhoax.herokuapp.com:*",
+
     ]
 
     app.add_middleware(
