@@ -6,10 +6,11 @@ from StorySquadAI.contestant import StorySquadAI
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
 import uvicorn
-#from fastapi.middleware.cors import CORSMiddleware
+# from fastapi.middleware.cors import CORSMiddleware
 
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
+
 
 def setup():
     this_dir = os.path.dirname(__file__)
@@ -64,14 +65,14 @@ def setup():
             exit()
     for i in bot_personalities.BotName:
         bots[i] = hoax_api.create_bot_with_personality(str(i).split(".")[1])
-
+    return app
 
 base_path = "/{api_key}"
 bots = {}
 setup()
 from bot_personalities import BotName
 
-app = FastAPI()
+app = setup()
 
 
 @app.get("/", response_class=HTMLResponse)
