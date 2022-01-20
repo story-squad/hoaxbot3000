@@ -4,6 +4,8 @@ import os.path
 import bot_personalities
 from StorySquadAI.contestant import StorySquadAI
 from fastapi import FastAPI
+from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 import uvicorn
 # from fastapi.middleware.cors import CORSMiddleware
@@ -73,10 +75,13 @@ setup()
 from bot_personalities import BotName
 
 app = setup()
-
+templates = Jinja2Templates(directory="templates")
 
 @app.get("/", response_class=HTMLResponse)
 def root_path():
+    html="""
+    
+    """
     return "<a href='/docs/'>docs</a>"
 
 
