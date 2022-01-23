@@ -15,6 +15,63 @@ from structured_experiments_storysquad_ai.bot_improvement_utilities.generate_res
 import pandas
 import numpy as np
 import random
+import yaml
+from yaml import CLoader as Loader, CDumper as Dumper
+
+
+class ConvertJsonToNewBot:
+    def __init__(self, bot_name: str = "", json_name: str = ""):
+        self.bot_name = bot_name
+        self.json_name = json_name
+
+    def go(self):
+        if not self.bot_name:
+            self.bot_name = input("name_version of the bot? (ie 'bubblebot_v5') : ")
+
+        if not self.json_name:
+            a = glob.glob("*.json")
+            print(f"json files found in {os.path.dirname(__file__)}")
+            for f in a:
+                print(f'\t{f}')
+
+            self.json_name = input("filename of the json file? ")
+
+            if self.json_name[-4:] != "json":
+                self.json_name = self.json_name + ".json"
+
+        print(f"using {self.bot_name} as the bot name")
+        print(f"using {self.json_name} as the json file to import from")
+        self.json_file_data = open(self.json_name, "r").read()
+        self.json_data_object = json.loads(self.json_file_data);
+
+        q_token = "6312641351"
+        r_token = "9384987534"
+
+        self.formatter = {
+            "thing": f"C: What is {q_token}?\n{r_token}\n\n",
+            "movie": f"C: Movie: {q_token}?\n{r_token}\n\n",
+            "person": f"C: Who is/was {q_token}?\n{r_token}\n\n",
+        }
+        self.SSAI = StorySquadAI(data_dir="../../../data//")
+        self.default_response_params = yaml.load(self.SSAI.default_yaml, Loader)
+
+        self.personality = StorySquadAI.Personality(responses=
+        {k: StorySquadAI.PersonalityRequestData(
+            logit_bias=self.default_response_params[k]["logit_bias"],
+            max_tokens=self.default_response_params[k]["max_tokens"],
+            temperature=self.default_response_params[k]["temperature"],
+            top_p=self.default_response_params[k]["top_p"],
+            context_doc=''.join(
+                [self.formatter[k].replace(q_token, q.replace("\n", "")).replace(r_token, r.replace("\n", "")) for q, r
+                 in v.items()])
+
+        )
+
+            for k, v in self.json_data_object.items()}
+        )
+        self.new_bot = self.SSAI.create_bot_with_personality(personality=self.bot_name,
+                                                             personality_data=self.personality)
+        print(self.personality)
 
 
 class SupervisedIterative:
