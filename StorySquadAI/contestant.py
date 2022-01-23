@@ -25,7 +25,24 @@ class StorySquadAI:
     """
     Class which manages the word hoax AI environment and provides access to AI
     """
-
+    default_yaml = """
+                      ai_general:
+                      movie:
+                         logit_bias: None
+                         max_tokens: 80
+                         temperature: 0.75
+                         top_p: None
+                      person:
+                         logit_bias: None
+                         max_tokens: 80
+                         temperature: 0.75
+                         top_p: None
+                      thing:
+                         logit_bias: None
+                         max_tokens: 80
+                         temperature: 0.75
+                         top_p: None
+                       """
     @dataclass
     class PersonalityRequestData:
         """
@@ -202,25 +219,7 @@ class StorySquadAI:
             yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
             details = yaml.load(open(yaml_file_path, encoding="utf-8", mode="r"), Loader)
         except FileNotFoundError as e:
-            default_yaml = """
-                      ai_general:
-                      movie:
-                         logit_bias: None
-                         max_tokens: 40
-                         temperature: 0.98
-                         top_p: None
-                      person:
-                         logit_bias: None
-                         max_tokens: 40
-                         temperature: 0.26
-                         top_p: None
-                      thing:
-                         logit_bias: None
-                         max_tokens: 40
-                         temperature: 0.51
-                         top_p: None
-                       """
-            new_yaml = yaml.load(default_yaml, Loader)
+            new_yaml = yaml.load(self.default_yaml, Loader)
             yaml.dump(new_yaml, open(e.filename, "w"))
             details = yaml.load(default_yaml, Loader)
         return details
