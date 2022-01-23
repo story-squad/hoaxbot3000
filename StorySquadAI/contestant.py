@@ -232,6 +232,7 @@ class StorySquadAI:
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
         bot_config_yaml = self.load_or_create_bot_yaml(personality)
 
+        #results in dict of stucture like {"movie":context_doc_contents}}
         response_contexts = {
             response: open(os.path.join(self.personalities_dir, personality, f"{response}.context.txt"),
                            encoding="utf-8").read()
