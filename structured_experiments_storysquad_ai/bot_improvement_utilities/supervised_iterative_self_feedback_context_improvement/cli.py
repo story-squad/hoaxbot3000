@@ -5,6 +5,7 @@ import json
 
 import pandas as pd
 from matplotlib.pyplot import xlabel
+from setuptools import glob
 
 from StorySquadAI.contestant import StorySquadAI
 import bot_personalities
@@ -134,4 +135,5 @@ class SupervisedIterative:
 
 if __name__ == "__main__":
     process = SupervisedIterative()
-    process.go(20)
+    process = ConvertJsonToNewBot(bot_name="bubblebot_v6", json_name="curie_bubblebot_v5_iterative.json")
+    process.go()
