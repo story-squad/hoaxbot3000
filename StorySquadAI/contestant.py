@@ -252,6 +252,8 @@ class StorySquadAI:
 
         return StorySquadAI.Personality(responses)
 
+    def save(self):
+        pass
 
 if __name__ == "__main__":
     HoaxAI = StorySquadAI()
