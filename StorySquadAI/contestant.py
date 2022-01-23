@@ -206,12 +206,17 @@ class StorySquadAI:
             else:
                 raise Exception(f"Directory without bot.yaml: {personality}")
 
-    def create_bot_with_personality(self, personality: str) -> StorySquadBot:
-        # if the personality exists
-        if personality in self.personalities:
+    def create_bot_with_personality(self, personality, personality_data = None) -> StorySquadBot:
+        if type(personality) is str:
+            # if the personality exists
+            if personality in self.personalities:
+                ctx_dir = os.path.join(self.personalities_dir, personality)
+                personality = self.load_personality_from_data_dir(personality, create_new=True)
+                return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality)
+
+        if personality_data:
             ctx_dir = os.path.join(self.personalities_dir, personality)
-            personality = self.load_personality_from_data_dir(personality, create_new=True)
-            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality)
+            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality_data)
 
     def load_or_create_bot_yaml(self, personality):
         try:
@@ -221,7 +226,7 @@ class StorySquadAI:
         except FileNotFoundError as e:
             new_yaml = yaml.load(self.default_yaml, Loader)
             yaml.dump(new_yaml, open(e.filename, "w"))
-            details = yaml.load(default_yaml, Loader)
+            details = yaml.load(self.default_yaml, Loader)
         return details
 
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
