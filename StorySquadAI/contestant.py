@@ -91,8 +91,17 @@ class StorySquadAI:
 
     class StorySquadBot:
         def __init__(self, personality: 'StorySquadAI.Personality', data_dir: str = "data",
-                     engine='curie', **kwargs):
+                     engine='curie',name:str=None, **kwargs):
             self.personality = personality
+
+
+            if name:
+                self.name = name
+            elif type(personality) is str:
+                self.name = personality
+            else:
+                raise ValueError("No name given for this bot!")
+
             self.context_dir = data_dir
             self.engine_to_use = engine
 
@@ -212,11 +221,11 @@ class StorySquadAI:
             if personality in self.personalities:
                 ctx_dir = os.path.join(self.personalities_dir, personality)
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
-                return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality)
+                return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality,name=personality)
 
         if personality_data:
             ctx_dir = os.path.join(self.personalities_dir, personality)
-            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality_data)
+            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality_data,name=personality)
 
     def load_or_create_bot_yaml(self, personality):
         try:
@@ -230,6 +239,7 @@ class StorySquadAI:
         return details
 
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
+        print(f'Loading {personality}..')
         bot_config_yaml = self.load_or_create_bot_yaml(personality)
 
         #results in dict of stucture like {"movie":context_doc_contents}}
@@ -253,8 +263,32 @@ class StorySquadAI:
 
         return StorySquadAI.Personality(responses)
 
-    def save(self):
-        pass
+    def save_bot(self,bot:StorySquadBot,overwrite:bool = False):
+        # create directory
+        os.mkdir(os.path.join(self.data_dir,"personalities", bot.name))
+
+        # create bot.yaml
+        yaml_file_name = os.path.join(self.data_dir, "personalities", bot.name, "bot.yaml")
+        print(yaml_file_name)
+        for k, v in bot.personality.responses.items():
+            yaml_params = yaml.load(StorySquadAI.default_yaml, Loader)
+            yaml_params[k]["logit_bias"] = v.logit_bias
+            yaml_params[k]["max_tokens"] = v.max_tokens
+            yaml_params[k]["temperature"] = v.temperature
+            yaml_params[k]["top_p"] = v.top_p
+        yaml.dump(yaml_params, open(yaml_file_name, "w"))
+
+
+        # create context docs
+        for k,v in bot.personality.responses.items():
+            context_file_name = os.path.join(self.data_dir, "personalities", bot.name, f"{k}.context.txt")
+            print(context_file_name)
+            with open(context_file_name,"w") as f:
+                f.write(v.context_doc)
+
+
+
+
 
 if __name__ == "__main__":
     HoaxAI = StorySquadAI()

@@ -73,6 +73,7 @@ class ConvertJsonToNewBot:
         self.new_bot = self.SSAI.create_bot_with_personality(personality=self.bot_name,
                                                              personality_data=self.personality)
         print(self.personality)
+        self.SSAI.save_bot(self.new_bot)
 
 
 class SupervisedIterative:
