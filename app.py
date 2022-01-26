@@ -85,6 +85,10 @@ def root_path():
     return "<a href='/docs/'>docs</a>"
 
 
+@app.get(base_path + "/botlist")
+def bot_list_result():
+    return list(BotName.__members__.keys())
+
 @app.get(base_path + "/thing/{thing_name}/{bot_name}")
 def thing_result(api_key, thing_name: str, bot_name: BotName):
     if api_key == "zetabot":
