@@ -294,8 +294,8 @@ if __name__ == "__main__":
     HoaxAI = StorySquadAI()
     print(HoaxAI.list_personalities())
 
-    bubble_testbot = HoaxAI.create_bot_with_personality("bubblebot")
-    buzzkill_testbot = HoaxAI.create_bot_with_personality("buzzkillbot")
+    bubble_testbot = HoaxAI.create_bot_with_personality("bubblebot_v1")
+    buzzkill_testbot = HoaxAI.create_bot_with_personality("buzzkillbot_v1")
     print("what is a Clatau Noctu?")
     print("Bubble bot:")
     a = bubble_testbot.thing("Clatau Noctu")
