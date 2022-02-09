@@ -20,7 +20,7 @@ alias = {
 
 def setup():
     this_dir = os.path.dirname(__file__)
-    this_data_dir = os.path.join(this_dir, "data")
+    this_data_dir = os.path.join(this_dir, "StorySquadAI/data")
     hoax_api = StorySquadAI(data_dir=this_data_dir)
 
     app = FastAPI()

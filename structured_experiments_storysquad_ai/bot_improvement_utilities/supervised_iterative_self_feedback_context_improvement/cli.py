@@ -53,7 +53,7 @@ class ConvertJsonToNewBot:
             "movie": f"C: Movie: {q_token}?\n{r_token}\n\n",
             "person": f"C: Who is/was {q_token}?\n{r_token}\n\n",
         }
-        self.SSAI = StorySquadAI(data_dir="../../../data//")
+        self.SSAI = StorySquadAI(data_dir="../../../StorySquadAI/data//")
         self.default_response_params = yaml.load(self.SSAI.default_yaml, Loader)
 
         self.personality = StorySquadAI.Personality(responses=
@@ -81,7 +81,7 @@ class SupervisedIterative:
     def __init__(self):
         self.query_dict = self.setup()
 
-        self.hoax_ai = StorySquadAI(data_dir="../../../data//")
+        self.hoax_ai = StorySquadAI(data_dir="../../../StorySquadAI/data//")
         self.results = {}
 
     def setup(self):

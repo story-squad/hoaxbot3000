@@ -177,7 +177,7 @@ class StorySquadAI:
     def init_error(self, e):
         raise Exception(e)
 
-    def __init__(self, data_dir=f"../data", **kwargs):
+    def __init__(self, data_dir=f"./data", **kwargs):
         self.data_dir = os.path.realpath(data_dir)
         self.personalities_dir = os.path.realpath(os.path.join(data_dir, "personalities"))
 

@@ -12,7 +12,7 @@ import pandas
 
 def print_basic_offline_diagnoses(bot: str, verbose=0):
     bot_personalities.BotName
-    _hoax_ai = StorySquadAI(data_dir="../../data//")
+    _hoax_ai = StorySquadAI(data_dir="../../StorySquadAI/data//")
     _bot = _hoax_ai.create_bot_with_personality(bot)
 
     ## context doc diagnostics
