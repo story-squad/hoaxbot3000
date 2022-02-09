@@ -3,19 +3,31 @@ import os.path
 
 import bot_personalities
 from StorySquadAI.contestant import StorySquadAI
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 import uvicorn
 # from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 
+import crud, models, schemas
+from database import SessionLocal, engine
 from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware import Middleware
 
 alias = {
     "bubblebot": "Alphabot"
 }
+
+
+# Dependency
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 def setup():
@@ -129,6 +141,11 @@ def de_alias_bot_name(bot_name):
     return bot_name
 
 
+@app.post("/responses/", response_model=schemas.ResponseRecord)
+def record_response(response: schemas.ResponseRecord, db: Session = Depends(get_db)):
+    crud.create_response(db=db, record=response)
+
+
 @app.get("/", response_class=HTMLResponse)
 def root_path():
     html = """
@@ -154,6 +171,7 @@ def handle_bot_name(bot_name):
     else:
         bot_name = get_most_recent_bot_name_from_root(bot_name)
     return bot_name
+
 
 @app.get(base_path + "/thing/{thing_name}/{bot_name}")
 def thing_result(api_key, thing_name: str, bot_name: BotName):
@@ -189,11 +207,17 @@ def person_result(api_key, person_name: str, bot_name: BotName):
 
 
 @app.get(base_path + "/guess/{prompt}/{choices}/{bot_name}")
-def guess_result(api_key, prompt: str, choices: str, bot_name: BotName):
+def guess_result(api_key, prompt: str, choices: str, bot_name: BotName, db: Session = Depends(get_db)):
     bot_name = handle_bot_name(bot_name)
 
     if api_key == "zetabot":
         output = bots[bot_name].guess(prompt, choices.split("*"))
+        for response in choices.split("*"):
+            if response != "":
+                record = models.ResponseRecord()
+                record.response = response
+                record.is_bot = False
+                crud.create_response(db=db, record=record)
         return output
     else:
         return "not authorized"
