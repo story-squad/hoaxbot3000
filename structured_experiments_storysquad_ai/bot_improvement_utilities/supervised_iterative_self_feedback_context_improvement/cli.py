@@ -118,9 +118,12 @@ class SupervisedIterative:
         if number_per_category == -1:
             number_per_category = int(input("How many responses to approve for each category?"))
 
-        print(bot_names._member_names_)
-        base_bot_name = input("use which bot as base?")
+        for bot in bot_names._member_names_:
+            print (bot)
+        base_bot_name = input("use which bot as base? (use one of the above exactly)")
+
         self.bot = self.hoax_ai.create_bot_with_personality(base_bot_name)
+
         self.bot.engine_to_use = "curie"
         filename = f"{self.bot.engine_to_use}_{base_bot_name}_iterative.json"
         pathname = os.path.dirname(__file__)
