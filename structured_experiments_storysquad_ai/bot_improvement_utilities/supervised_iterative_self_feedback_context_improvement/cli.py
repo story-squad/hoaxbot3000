@@ -26,6 +26,7 @@ class ConvertJsonToNewBot:
         self.json_name = json_name
 
     def go(self):
+        # if bot_name is not defined then this is the first call to go
         if not self.bot_name:
             self.bot_name = input("name_version of the bot? (ie 'bubblebot_v5') : ")
 
@@ -79,17 +80,15 @@ class ConvertJsonToNewBot:
 class SupervisedIterative:
 
     def __init__(self):
-        self.query_dict = self.setup()
-
+        _query_list = get_extended_query_list()
+        self.query_dict = {"thing": {item[0] for item in _query_list},
+                           "person": {item[1] for item in _query_list},
+                           "movie": {item[2] for item in _query_list}}
+        del _query_list
         self.hoax_ai = StorySquadAI(data_dir="../../../StorySquadAI/data//")
         self.results = {}
-
-    def setup(self):
-        _query_list = get_extended_query_list()
-        _query_dict = {"thing": {item[0] for item in _query_list}, "person": {item[1] for item in _query_list},
-                       "movie": {item[2] for item in _query_list}}
-
-        return _query_dict
+        with open("movies_popular_real_300.txt", "r") as f:
+            self.query_movies_popular_list = f.read().splitlines()
 
     def supervise(self, response_type: str):
         if not self.results[response_type]:
@@ -111,6 +110,14 @@ class SupervisedIterative:
             self.results[response_type][prompt] = response
 
     def go(self, number_per_category):
+        yn = input("Substitute real movie names from 'movies_popular_real_300.txt'?")
+        if "y" in yn:
+            self.query_dict["movie"] = self.query_movies_popular_list
+            print("\tLoaded.")
+
+        if number_per_category == -1:
+            number_per_category = int(input("How many responses to approve for each category?"))
+
         print(bot_names._member_names_)
         base_bot_name = input("use which bot as base?")
         self.bot = self.hoax_ai.create_bot_with_personality(base_bot_name)
@@ -123,7 +130,8 @@ class SupervisedIterative:
         except FileNotFoundError as e:
             print("new results file created.")
 
-        for i, _list in enumerate(["thing", "person", "movie"]):
+        # for _list in ["thing", "person", "movie"]:
+        for _list in ["movie", "thing", "person"]:
             if _list not in self.results.keys(): self.results[_list] = {}
             while len(self.results[_list]) < number_per_category:
                 self.supervise(_list)
@@ -132,9 +140,10 @@ class SupervisedIterative:
                 with open(os.path.join(pathname, filename), "w") as f:
                     f.write(json_out)
             print(f'{_list} done.')
+        print("Process Done.")
 
 
 if __name__ == "__main__":
     process = SupervisedIterative()
-    process = ConvertJsonToNewBot(bot_name="bubblebot_v6", json_name="curie_bubblebot_v5_iterative.json")
-    process.go()
+    # process = ConvertJsonToNewBot(bot_name="bubblebot_v6", json_name="curie_bubblebot_v5_iterative.json")
+    process.go(-1)
