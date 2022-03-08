@@ -2,10 +2,11 @@ import os.path
 
 import openai
 import json
-from StorySquadAI.contestant import StorySquadAI
+from StorySquadAI.story_squad_bot import StorySquadBot
+from StorySquadAI.story_squad_ai import StorySquadAI
 
 
-def get_embedding(bot: StorySquadAI.StorySquadBot, s: str = "test string"):
+def get_embedding(bot: StorySquadBot, s: str = "test string"):
     embedding = openai.Engine(id=f"{bot.engine_to_use}-similarity").embeddings(input=s)['data'][0]['embedding']
     return embedding
 
@@ -56,7 +57,7 @@ def create_save_bot_results_for_bot(query_list: [(str, str, str)], bot: str, num
 def get_extended_query_list():
     base_dir = os.path.dirname(__file__)
     files = [f"things_100.txt", f"names_100.txt", f"movies_100.txt"]
-    files = map(lambda x:  os.path.join(base_dir,x),files)
+    files = map(lambda x: os.path.join(base_dir, x), files)
     extended_query_list = []
     for file_name in files:
         with open(file_name) as f:
@@ -65,7 +66,8 @@ def get_extended_query_list():
     extended_query_list = [(a, b, c) for a, b, c in extended_query_list]
     return extended_query_list
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     HoaxAI = StorySquadAI(data_dir="../../StorySquadAI/data//")
 
     which_bot = input("Which bot? ")

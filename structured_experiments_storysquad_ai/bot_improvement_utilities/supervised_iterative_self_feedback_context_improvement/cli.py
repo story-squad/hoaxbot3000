@@ -7,7 +7,7 @@ import pandas as pd
 from matplotlib.pyplot import xlabel
 from setuptools import glob
 
-from StorySquadAI.contestant import StorySquadAI
+from StorySquadAI.story_squad_ai import StorySquadAI
 import bot_personalities
 import matplotlib.pyplot as plt
 from bot_personalities import BotName as bot_names

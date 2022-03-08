@@ -8,6 +8,8 @@ import openai
 import pandas as pd
 import yaml
 from typing import List
+from .story_squad_bot import StorySquadBot
+
 from yaml import CLoader as Loader, CDumper as Dumper
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -43,6 +45,7 @@ class StorySquadAI:
                          temperature: 0.75
                          top_p: None
                        """
+
     @dataclass
     class PersonalityRequestData:
         """
@@ -89,91 +92,6 @@ class StorySquadAI:
         """
         responses: dict[str, 'StorySquadAI.PersonalityRequestData']
 
-    class StorySquadBot:
-        def __init__(self, personality: 'StorySquadAI.Personality', data_dir: str = "data",
-                     engine='curie',name:str=None, **kwargs):
-            self.personality = personality
-
-
-            if name:
-                self.name = name
-            elif type(personality) is str:
-                self.name = personality
-            else:
-                raise ValueError("No name given for this bot!")
-
-            self.context_dir = data_dir
-            self.engine_to_use = engine
-
-        def person(self, person: str):
-            response_name = "person"
-            kwargs = {
-                "engine": self.engine_to_use,
-                "prompt": f'{self.personality.responses[response_name].context_doc}C: Who is/was {person}?\n',
-                "temperature": self.personality.responses[response_name].temperature,
-                "max_tokens": self.personality.responses[response_name].max_tokens,
-                "top_p": self.personality.responses[response_name].top_p,
-                "stop": ["C: ", "\n\n"]
-            }
-            kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
-            response = openai.Completion.create(**kwargs)
-            possible_response = response["choices"][0]["text"]
-            return possible_response
-
-        def guess(self, prompt: str, choices: list):
-            response = openai.Engine(self.engine_to_use).search(
-                documents=choices,
-                query=prompt
-            )
-
-            df = pd.DataFrame(response["data"])
-            df.sort_values(by="score", inplace=True)
-            pick = choices[df.iloc[-1].document]
-            context = ".".join(choices)
-            prompt = f"I'm going to go with {pick} because"
-            response = openai.Completion.create(
-                engine=self.engine_to_use,
-                prompt=context + prompt,
-                temperature=1,
-                max_tokens=40,
-                top_p=.7,
-                best_of=1,
-                frequency_penalty=.2,
-                presence_penalty=0,
-                stop="."
-            )
-            return f'{prompt} :: {response["choices"][0]["text"]}.'
-
-        def thing(self, prompt: str):
-            response_name = "thing"
-            kwargs = {
-                "engine": self.engine_to_use,
-                "prompt": f'{self.personality.responses[response_name].context_doc}C: what is {prompt}?\n',
-                "temperature": self.personality.responses[response_name].temperature,
-                "max_tokens": self.personality.responses[response_name].max_tokens,
-                "top_p": self.personality.responses[response_name].top_p,
-                "stop": ["C: ", "\n\n"]
-            }
-            kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
-            response = openai.Completion.create(**kwargs)
-            response = response["choices"][0]["text"]
-            return response
-
-        def movie(self, movie: str):
-            response_name = 'movie'
-            kwargs = {
-                "engine": self.engine_to_use,
-                "prompt": f'{self.personality.responses[response_name].context_doc}C: Movie:{movie}?\n',
-                "temperature": self.personality.responses[response_name].temperature,
-                "max_tokens": self.personality.responses[response_name].max_tokens,
-                "top_p": self.personality.responses[response_name].top_p,
-                "stop": ["C: ", "\n\n"]
-            }
-            kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
-            response = openai.Completion.create(**kwargs)
-            possible_response = response["choices"][0]["text"]
-            return possible_response
-
     def init_error(self, e):
         raise Exception(e)
 
@@ -215,17 +133,17 @@ class StorySquadAI:
             else:
                 raise Exception(f"Directory without bot.yaml: {personality}")
 
-    def create_bot_with_personality(self, personality, personality_data = None) -> StorySquadBot:
+    def create_bot_with_personality(self, personality, personality_data=None) -> StorySquadBot:
         if type(personality) is str:
             # if the personality exists
             if personality in self.personalities:
                 ctx_dir = os.path.join(self.personalities_dir, personality)
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
-                return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality,name=personality)
+                return StorySquadBot(data_dir=ctx_dir, personality=personality, name=personality)
 
         if personality_data:
             ctx_dir = os.path.join(self.personalities_dir, personality)
-            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality_data,name=personality)
+            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality_data, name=personality)
 
     def load_or_create_bot_yaml(self, personality):
         try:
@@ -242,7 +160,7 @@ class StorySquadAI:
         print(f'Loading {personality}..')
         bot_config_yaml = self.load_or_create_bot_yaml(personality)
 
-        #results in dict of stucture like {"movie":context_doc_contents}}
+        # results in dict of stucture like {"movie":context_doc_contents}}
         response_contexts = {
             response: open(os.path.join(self.personalities_dir, personality, f"{response}.context.txt"),
                            encoding="utf-8").read()
@@ -263,9 +181,9 @@ class StorySquadAI:
 
         return StorySquadAI.Personality(responses)
 
-    def save_bot(self,bot:StorySquadBot,overwrite:bool = False):
+    def save_bot(self, bot: StorySquadBot, overwrite: bool = False):
         # create directory
-        os.mkdir(os.path.join(self.data_dir,"personalities", bot.name))
+        os.mkdir(os.path.join(self.data_dir, "personalities", bot.name))
 
         # create bot.yaml
         yaml_file_name = os.path.join(self.data_dir, "personalities", bot.name, "bot.yaml")
@@ -278,16 +196,12 @@ class StorySquadAI:
             yaml_params[k]["top_p"] = v.top_p
         yaml.dump(yaml_params, open(yaml_file_name, "w"))
 
-
         # create context docs
-        for k,v in bot.personality.responses.items():
+        for k, v in bot.personality.responses.items():
             context_file_name = os.path.join(self.data_dir, "personalities", bot.name, f"{k}.context.txt")
             print(context_file_name)
-            with open(context_file_name,"w") as f:
+            with open(context_file_name, "w") as f:
                 f.write(v.context_doc)
-
-
-
 
 
 if __name__ == "__main__":

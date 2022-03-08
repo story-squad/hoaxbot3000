@@ -2,7 +2,7 @@ import datetime
 import os.path
 
 import bot_personalities
-from StorySquadAI.contestant import StorySquadAI
+from StorySquadAI.story_squad_ai import StorySquadAI
 from fastapi import FastAPI, HTTPException, Query, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
