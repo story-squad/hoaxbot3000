@@ -3,12 +3,9 @@
 from dataclasses import dataclass
 import glob
 import os
-import random
 import openai
-import pandas as pd
 import yaml
-from typing import List
-from .story_squad_bot import StorySquadBot
+from StorySquadAI.story_squad_bot import StorySquadBot
 
 from yaml import CLoader as Loader, CDumper as Dumper
 
