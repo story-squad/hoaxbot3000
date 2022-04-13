@@ -131,7 +131,7 @@ class StorySquadBot:
             presence_penalty=0,
             stop="."
         )
-        response = self.wrapped_completion(**kwargs)
+        response = self.wrapped_completion()
         return response
 
         return f'{prompt} :: {response["choices"][0]["text"]}.'
