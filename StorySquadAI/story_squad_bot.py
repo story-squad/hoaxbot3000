@@ -18,7 +18,7 @@ class StorySquadBot:
         self.engine_to_use = engine
 
     def moderate_maybe(self, possible_response: str):
-        """returns -1 if the response is likley not moderate, otherwise returns the response that it was given"""
+        """returns -1 if the response is likely not moderate, otherwise returns the response that it was given"""
         if self.moderate:
             content_to_classify = possible_response
 
