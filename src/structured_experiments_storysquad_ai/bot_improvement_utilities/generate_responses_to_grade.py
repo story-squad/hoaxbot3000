@@ -2,8 +2,8 @@ import os.path
 
 import openai
 import json
-from StorySquadAI.story_squad_bot import StorySquadBot
-from StorySquadAI.story_squad_ai import StorySquadAI
+from src.StorySquadAI.story_squad_bot import StorySquadBot
+from src.StorySquadAI.story_squad_ai import StorySquadAI
 
 
 def get_embedding(bot: StorySquadBot, s: str = "test string"):

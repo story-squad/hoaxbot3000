@@ -1,20 +1,22 @@
 import datetime
 import os.path
 
-import bot_personalities
-from StorySquadAI.story_squad_ai import StorySquadAI
-from fastapi import FastAPI, HTTPException, Query, Depends
+from StorySquadAI_web_api import bot_personalities
+from src.StorySquadAI.story_squad_ai import StorySquadAI
+from fastapi import FastAPI, Query, Depends
 from fastapi.templating import Jinja2Templates
-from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse
 import uvicorn
 # from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
 
-import crud, models, schemas
-from database import SessionLocal, engine
+
+from StorySquadAI_web_api import models
+from StorySquadAI_web_api import crud
+from StorySquadAI_web_api import schemas
+
+from StorySquadAI_web_api.database import SessionLocal
 from starlette.middleware.cors import CORSMiddleware
-from starlette.middleware import Middleware
 
 alias = {
     "bubblebot": "Alphabot"
@@ -31,8 +33,8 @@ def get_db():
 
 
 def setup():
-    this_dir = os.path.dirname(__file__)
-    this_data_dir = os.path.join(this_dir, "StorySquadAI/data")
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "data")
     hoax_api = StorySquadAI(data_dir=this_data_dir)
 
     app = FastAPI()
@@ -102,7 +104,7 @@ def setup():
 base_path = "/{api_key}"
 bots = {}
 setup()
-from bot_personalities import BotName
+from StorySquadAI_web_api.bot_personalities import BotName
 
 app = setup()
 templates = Jinja2Templates(directory="templates")
@@ -147,7 +149,7 @@ def record_response(response: schemas.ResponseRecord, db: Session = Depends(get_
 
 
 @app.get("/", response_class=HTMLResponse)
-def root_path():
+async def root_path():
     html = """
     
     """

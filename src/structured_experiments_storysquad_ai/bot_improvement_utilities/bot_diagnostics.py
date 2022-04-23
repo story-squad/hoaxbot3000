@@ -1,14 +1,9 @@
-import openai
-import json
-
 import pandas as pd
-from matplotlib.pyplot import xlabel
 
-from StorySquadAI.story_squad_ai import StorySquadAI
-import bot_personalities
+from src.StorySquadAI.story_squad_ai import StorySquadAI
+from src.StorySquadAI_web_api import bot_personalities
 import matplotlib.pyplot as plt
-from bot_personalities import BotName as bot_names
-import pandas
+
 
 def print_basic_offline_diagnoses(bot: str, verbose=0):
     bot_personalities.BotName

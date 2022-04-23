@@ -1,23 +1,16 @@
 import os.path
 
-import openai
 import json
 
-import pandas as pd
-from matplotlib.pyplot import xlabel
 from setuptools import glob
 
-from StorySquadAI.story_squad_ai import StorySquadAI
-import bot_personalities
-import matplotlib.pyplot as plt
-from bot_personalities import BotName as bot_names
-from structured_experiments_storysquad_ai.bot_improvement_utilities.generate_responses_to_grade import \
+from src.StorySquadAI.story_squad_ai import StorySquadAI
+from src.StorySquadAI_web_api.bot_personalities import BotName as bot_names
+from src.structured_experiments_storysquad_ai.bot_improvement_utilities.generate_responses_to_grade import \
     get_extended_query_list
-import pandas
-import numpy as np
 import random
 import yaml
-from yaml import CLoader as Loader, CDumper as Dumper
+from yaml import CLoader as Loader
 
 
 class ConvertJsonToNewBot:

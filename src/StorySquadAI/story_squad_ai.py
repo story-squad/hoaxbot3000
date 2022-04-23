@@ -5,9 +5,9 @@ import glob
 import os
 import openai
 import yaml
-from StorySquadAI.story_squad_bot import StorySquadBot
+from src.StorySquadAI.story_squad_bot import StorySquadBot
 
-from yaml import CLoader as Loader, CDumper as Dumper
+from yaml import CLoader as Loader
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 

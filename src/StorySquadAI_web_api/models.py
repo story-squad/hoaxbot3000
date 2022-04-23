@@ -1,7 +1,7 @@
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import relationship
 
-from database import Base
+from StorySquadAI_web_api.database import Base
 
 
 class ResponseRecord(Base):
