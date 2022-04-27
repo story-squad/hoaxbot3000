@@ -131,10 +131,10 @@ class StorySquadBot:
             presence_penalty=0,
             stop="."
         )
-        response = self.wrapped_completion()
-        return response
+        #response = self.wrapped_completion()
+        #return response
 
-        return f'{prompt} :: {response["choices"][0]["text"]}.'
+        return f'{prompt} :: {response}.'
 
     def thing(self, prompt: str):
         response_name = "thing"
