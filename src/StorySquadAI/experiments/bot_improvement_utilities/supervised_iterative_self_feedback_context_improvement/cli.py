@@ -4,7 +4,7 @@ import json
 
 from setuptools import glob
 
-from src.StorySquadAI.story_squad_ai import StorySquadAI
+from src.StorySquadAI import StorySquadAI
 from src.StorySquadAI_web_api.bot_personalities import BotName as bot_names
 from src.structured_experiments_storysquad_ai.bot_improvement_utilities.generate_responses_to_grade import \
     get_extended_query_list
@@ -47,7 +47,7 @@ class ConvertJsonToNewBot:
             "movie": f"C: Movie: {q_token}?\n{r_token}\n\n",
             "person": f"C: Who is/was {q_token}?\n{r_token}\n\n",
         }
-        self.SSAI = StorySquadAI(data_dir="../../../StorySquadAI/data//")
+        self.SSAI = StorySquadAI(data_dir="../../../Alphabots/data//")
         self.default_response_params = yaml.load(self.SSAI.default_yaml, Loader)
 
         self.personality = StorySquadAI.Personality(responses=
@@ -78,7 +78,7 @@ class SupervisedIterative:
                            "person": {item[1] for item in _query_list},
                            "movie": {item[2] for item in _query_list}}
         del _query_list
-        self.hoax_ai = StorySquadAI(data_dir="../../../StorySquadAI/data//")
+        self.hoax_ai = StorySquadAI(data_dir="../../../Alphabots/data//")
         self.results = {}
         with open("movies_popular_real_300.txt", "r") as f:
             self.query_movies_popular_list = f.read().splitlines()

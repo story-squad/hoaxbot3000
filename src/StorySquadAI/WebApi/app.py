@@ -2,7 +2,7 @@ import datetime
 import os.path
 
 from StorySquadAI_web_api import bot_personalities
-from src.StorySquadAI.story_squad_ai import StorySquadAI
+from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 from fastapi import FastAPI, Query, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse

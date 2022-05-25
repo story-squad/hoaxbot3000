@@ -5,7 +5,7 @@ import glob
 import os
 import openai
 import yaml
-from src.StorySquadAI.story_squad_bot import StorySquadBot
+from src.StorySquadAI.Alphabots.story_squad_bot import StorySquadBot
 
 from yaml import CLoader as Loader
 
