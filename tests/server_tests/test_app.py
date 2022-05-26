@@ -41,7 +41,7 @@ def find_file_in_parent_dirs(filename: str, path: str, depth: int) -> str:
 
 
 def test_heroku_deployment_should_serve():
-    procfile_dir = find_file_in_parent_dirs("Procfile", "..", 10)
+    procfile_dir = find_file_in_parent_dirs("Procfile", ".", 10)
     assert procfile_dir != -1
     web_command = read_procfile(procfile_dir)["web"]
     assert uvicorn_tester( web_command,port ="8080", app_name="app") == 0
