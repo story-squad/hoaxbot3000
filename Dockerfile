@@ -18,4 +18,5 @@ WORKDIR /
 COPY ./src /src
 COPY ./requirements.txt /requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /requirements.txt
-CMD ["uvicorn", "src.StorySquadAI_web_api.app:app", "--host", "0.0.0.0", "--port", "80"]
+CMD ["uvicorn", "src.StorySquadAI.WebApi.app:app", "--host", "0.0.0.0", "--port", "80"]
+# uvicorn src.StorySquadAI.WebApi.app:app --host 0.0.0.0 --port 80

@@ -3,11 +3,11 @@ import os
 import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from StorySquadAI_web_api.app import app
+from StorySquadAI.WebApi import app
 import requests
 
-test_client = TestClient(app)
-os.putenv("")
+test_client = TestClient(app.app)
+
 
 def read_procfile(path: str):
     """

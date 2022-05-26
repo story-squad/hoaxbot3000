@@ -1,7 +1,7 @@
 import datetime
 import os.path
 
-from StorySquadAI_web_api import bot_personalities
+from StorySquadAI.WebApi import bot_personalities
 from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 from fastapi import FastAPI, Query, Depends
 from fastapi.templating import Jinja2Templates
@@ -11,11 +11,11 @@ import uvicorn
 from sqlalchemy.orm import Session
 
 
-from StorySquadAI_web_api import models
-from StorySquadAI_web_api import crud
-from StorySquadAI_web_api import schemas
+from StorySquadAI.WebApi import models
+from StorySquadAI.WebApi import crud
+from StorySquadAI.WebApi import schemas
 
-from StorySquadAI_web_api.database import SessionLocal
+from StorySquadAI.WebApi.database import SessionLocal
 from starlette.middleware.cors import CORSMiddleware
 
 alias = {
@@ -34,7 +34,7 @@ def get_db():
 
 def setup():
     this_dir = os.getenv("STORYSQUADAI_PATH")
-    this_data_dir = os.path.join(this_dir, "data")
+    this_data_dir = os.path.join(this_dir, "Alphabots","data")
     hoax_api = StorySquadAI(data_dir=this_data_dir)
 
     app = FastAPI()
@@ -104,7 +104,7 @@ def setup():
 base_path = "/{api_key}"
 bots = {}
 setup()
-from StorySquadAI_web_api.bot_personalities import BotName
+from StorySquadAI.WebApi.bot_personalities import BotName
 
 app = setup()
 templates = Jinja2Templates(directory="templates")
