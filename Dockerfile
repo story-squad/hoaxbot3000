@@ -13,7 +13,8 @@ RUN python3 -m ensurepip
 RUN pip3 install --no-cache --upgrade pip setuptools
 
 ENV STORYSQUADAI_PATH=/src/StorySquadAI/
-ENV OPENAI_API_KEY=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
+ENV OPENAI_API_KEY=%OPENAI_API_KEY%
+
 WORKDIR /
 COPY ./src /src
 COPY ./requirements.txt /requirements.txt
