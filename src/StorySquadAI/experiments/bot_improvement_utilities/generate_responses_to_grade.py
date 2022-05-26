@@ -3,7 +3,7 @@ import os.path
 import openai
 import json
 from src.StorySquadAI.Alphabots.story_squad_bot import StorySquadBot
-from src.StorySquadAI import StorySquadAI
+from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 
 
 def get_embedding(bot: StorySquadBot, s: str = "test string"):

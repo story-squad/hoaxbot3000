@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.StorySquadAI import StorySquadAI
+from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 from src.StorySquadAI.WebApi import bot_personalities
 import matplotlib.pyplot as plt
 
