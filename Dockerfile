@@ -12,6 +12,7 @@ FROM python:slim
 RUN python3 -m ensurepip
 RUN pip3 install --no-cache --upgrade pip setuptools
 
+ENV DATABASE_PATH=/src/StorySquadAI/WebApi/
 ENV STORYSQUADAI_PATH=/src/StorySquadAI/
 ENV OPENAI_API_KEY=%OPENAI_API_KEY%
 
