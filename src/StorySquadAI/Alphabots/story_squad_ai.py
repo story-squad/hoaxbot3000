@@ -93,7 +93,7 @@ class StorySquadAI:
         raise Exception(e)
 
     def __init__(self, data_dir=f"./data", **kwargs):
-        self.data_dir = os.path.realpath(data_dir)
+        #self.data_dir = os.path.realpath(data_dir)
         self.personalities_dir = os.path.realpath(os.path.join(data_dir, "personalities"))
 
         self.data_dir_glob_str = os.path.join(self.data_dir, "*")
@@ -106,7 +106,7 @@ class StorySquadAI:
         self.personalities = self.list_personalities()
 
         data_dir_list = "\n".join([f'dir: {e}' for e in self.data_dir_glob])
-        data_dir_list = f'data_dir:{self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str} {data_dir_list}'
+        data_dir_list = f'\n data_dir:{self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str} {data_dir_list}'
         True if self.personalities_dir in self.data_dir_glob else self.init_error(
             f"invalid data dir {self.personalities_dir} does not exist inside ({os.path.realpath(self.data_dir)}) {data_dir_list}")
 
