@@ -51,4 +51,4 @@ typing_extensions==4.0.1
 urllib3==1.26.8
 uvicorn==0.17.0
 Werkzeug==2.0.2
--e /src/
+-e ./src/
