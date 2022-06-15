@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
 
-from StorySquadAI.WebApi import schemas, models
+from src.StorySquadAI.WebApi import schemas, models
 
 
 def get_response(db: Session, id: int):

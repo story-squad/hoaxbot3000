@@ -44,7 +44,7 @@ def test_heroku_deployment_should_serve():
     procfile_dir = find_file_in_parent_dirs("Procfile", ".", 10)
     assert procfile_dir != -1
     web_command = read_procfile(procfile_dir)["web"]
-    assert uvicorn_tester( web_command,port ="8080", app_name="app") == 0
+    assert uvicorn_tester(web_command, port="8080", app_name="app") == 0
 
 
 def test_setup():
@@ -52,7 +52,7 @@ def test_setup():
     assert response.status_code == 200
 
 
-def uvicorn_tester(uvicorn_command,port="8080", app_name="app"):
+def uvicorn_tester(uvicorn_command, port="8080", app_name="app"):
     uvicorn_command = uvicorn_command.replace("$PORT", port)
     print("\nExecuting command: " + uvicorn_command + "\n")
     try:
@@ -65,8 +65,8 @@ def uvicorn_tester(uvicorn_command,port="8080", app_name="app"):
             print("\nkilling server.\n")
             proc_uvicorn.kill()
             return 0
-        except:
-            print("\nServer is not responding.\n")
+        except BaseException as e:
+            print(f"\nServer is not responding.\n{e}")
             print("\nkilling server.\n")
             proc_uvicorn.kill()
             return 1

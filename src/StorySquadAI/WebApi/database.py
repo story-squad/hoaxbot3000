@@ -1,9 +1,12 @@
+import sqlalchemy.util
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 import os
 
-SQLALCHEMY_DATABASE_URL = "sqlite://"+os.getenv("DATABASE_PATH") + "sql_app.db"
+path_env = os.getenv("DATABASE_FILE")
+SQLALCHEMY_DATABASE_URL = "sqlite:///" + path_env
+# sqlite:///C:\\Users\\Username\\AppData\\Roaming\\Appname\\mydatabase.db
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False}
