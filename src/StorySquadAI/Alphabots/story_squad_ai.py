@@ -104,6 +104,8 @@ class StorySquadAI:
 
         self.data_dir_glob = glob.glob(self.data_dir_glob_str)
         self.personalities = self.list_personalities()
+        for e in self.data_dir_glob :
+            print(e)
 
         True if self.personalities_dir in self.data_dir_glob else self.init_error(
             f"invalid data dir {self.personalities_dir} does not exist inside ({os.path.realpath(self.data_dir)})")
