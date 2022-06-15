@@ -106,7 +106,7 @@ class StorySquadAI:
         self.personalities = self.list_personalities()
 
         data_dir_list = "\n".join([f'dir: {e}' for e in self.data_dir_glob])
-        data_dir_list= f'data_dir:{data_dir} \n {data_dir_list}'
+        data_dir_list = f'data_dir:{self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str} {data_dir_list}'
         True if self.personalities_dir in self.data_dir_glob else self.init_error(
             f"invalid data dir {self.personalities_dir} does not exist inside ({os.path.realpath(self.data_dir)}) {data_dir_list}")
 
