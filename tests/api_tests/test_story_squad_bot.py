@@ -1,4 +1,4 @@
-from StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
+from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 import os
 
 def test_guess():

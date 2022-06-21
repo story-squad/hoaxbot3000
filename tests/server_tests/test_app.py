@@ -1,9 +1,12 @@
 import subprocess
 import os
+import time
+
 import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-from StorySquadAI.WebApi import app
+#from StorySquadAI.WebApi import app
+from src.StorySquadAI.WebApi import app
 import requests
 
 test_client = TestClient(app.app)
@@ -60,6 +63,7 @@ def uvicorn_tester(uvicorn_command, port="8080", app_name="app"):
         print("\nUvicorn command has executed successfully.\n")
         try:
             # responds when the server is up
+            time.sleep(2)
             response = requests.get("http://127.0.0.1:" + str(port))
             print("\nSuccessful response from server.\n")
             print("\nkilling server.\n")
