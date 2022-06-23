@@ -5,6 +5,7 @@ import glob
 import os
 import openai
 import yaml
+import platform
 from src.StorySquadAI.Alphabots.story_squad_bot import StorySquadBot
 
 from yaml import CLoader as Loader
@@ -106,10 +107,24 @@ class StorySquadAI:
         self.data_dir_glob = glob.glob(self.data_dir_glob_str)
         self.personalities = self.list_personalities()
 
-        data_dir_list = "\n".join([f'dir: {e}' for e in self.data_dir_glob])
-        data_dir_list = f'\n data_dir:{self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str} {data_dir_list}'
+        data_dir_list = "\n".join([f'{e}' for e in self.data_dir_glob])
+
+        #data_dir_list = f'\n data_dir: {self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str}{data_dir_list}'
+
+        if "win" in platform.system().lower():
+            if self.personalities_dir[1] == ":":
+                self.personalities_dir = list(self.personalities_dir)
+                self.personalities_dir[0] = self.personalities_dir[0].lower()
+                self.personalities_dir = "".join(self.personalities_dir)
+                for i in range(len(self.data_dir_glob)):
+                    if self.data_dir_glob[i][1] == ":":
+                        self.data_dir_glob[i] = list(self.data_dir_glob[i])
+                        self.data_dir_glob[i][0] = self.data_dir_glob[i][0]
+                        self.data_dir_glob[i] = "".join(self.data_dir_glob[i])
+
+
         True if self.personalities_dir in self.data_dir_glob else self.init_error(
-            f"invalid data dir {self.personalities_dir} does not exist inside ({os.path.realpath(self.data_dir)}) {data_dir_list}")
+            f"invalid data dir \n {self.personalities_dir} \n {os.path.realpath(self.data_dir)}\n {data_dir_list} ")
 
     def list_personalities(self):
         self.check_personalities()
