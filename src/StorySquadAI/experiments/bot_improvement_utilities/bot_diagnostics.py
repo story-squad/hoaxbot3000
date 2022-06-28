@@ -1,12 +1,10 @@
 import pandas as pd
 
 from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
-from src.StorySquadAI.WebApi import bot_personalities
 import matplotlib.pyplot as plt
 
 
 def print_basic_offline_diagnoses(bot: str, verbose=0):
-    bot_personalities.BotName
     _hoax_ai = StorySquadAI(data_dir="../../Alphabots/data//")
     _bot = _hoax_ai.create_bot_with_personality(bot)
 
