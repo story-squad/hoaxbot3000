@@ -157,9 +157,8 @@ class StorySquadAI:
                 return StorySquadBot(data_dir=ctx_dir, personality=personality, name=personality)
 
     def load_bot_yaml(self, personality):
-        try:
-            yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
-            details = yaml.load(open(yaml_file_path, encoding="utf-8", mode="r"), Loader)
+        yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
+        details = yaml.load(open(yaml_file_path, encoding="utf-8", mode="r"), Loader)
         return details
 
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
