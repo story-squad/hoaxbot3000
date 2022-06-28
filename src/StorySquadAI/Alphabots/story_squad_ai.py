@@ -207,38 +207,3 @@ class StorySquadAI:
             print(context_file_name)
             with open(context_file_name, "w") as f:
                 f.write(v.context_doc)
-
-
-if __name__ == "__main__":
-    HoaxAI = StorySquadAI()
-    print(HoaxAI.list_personalities())
-
-    bubble_testbot = HoaxAI.create_bot_with_personality("bubblebot_v1")
-    buzzkill_testbot = HoaxAI.create_bot_with_personality("buzzkillbot_v1")
-    print("what is a Clatau Noctu?")
-    print("Bubble bot:")
-    a = bubble_testbot.thing("Clatau Noctu")
-    print(a)
-
-    print("\nBuzzkill bot:")
-    b = buzzkill_testbot.thing("Clatau Noctu")
-    print(b)
-
-    ########
-    print("\n\nWho is/was Jennie Sky Kent ")
-    print("Bubble bot:")
-    a = bubble_testbot.person("Jennie Sky Kent")
-    print(a)
-
-    print("\nBuzzkill bot:")
-    b = buzzkill_testbot.person("Jennie Sky Kent")
-    print(b)
-
-    print("\n\nwhat is the movie 'A thing called Wanda' about?")
-    print("Bubble bot:")
-    a = bubble_testbot.movie("A thing called Wanda")
-    print(a)
-
-    print("\nBuzzkill bot:")
-    b = buzzkill_testbot.movie("A thing called Wanda")
-    print(b)
