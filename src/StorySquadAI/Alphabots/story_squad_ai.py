@@ -156,10 +156,6 @@ class StorySquadAI:
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
                 return StorySquadBot(data_dir=ctx_dir, personality=personality, name=personality)
 
-        if personality_data:
-            ctx_dir = os.path.join(self.personalities_dir, personality)
-            return StorySquadAI.StorySquadBot(data_dir=ctx_dir, personality=personality_data, name=personality)
-
     def load_or_create_bot_yaml(self, personality):
         try:
             # details = .read()
