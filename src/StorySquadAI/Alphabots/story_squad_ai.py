@@ -156,20 +156,15 @@ class StorySquadAI:
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
                 return StorySquadBot(data_dir=ctx_dir, personality=personality, name=personality)
 
-    def load_or_create_bot_yaml(self, personality):
+    def load_bot_yaml(self, personality):
         try:
-            # details = .read()
             yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
             details = yaml.load(open(yaml_file_path, encoding="utf-8", mode="r"), Loader)
-        except FileNotFoundError as e:
-            new_yaml = yaml.load(self.default_yaml, Loader)
-            yaml.dump(new_yaml, open(e.filename, "w"))
-            details = yaml.load(self.default_yaml, Loader)
         return details
 
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
         print(f'Loading {personality}..')
-        bot_config_yaml = self.load_or_create_bot_yaml(personality)
+        bot_config_yaml = self.load_bot_yaml(personality)
 
         # results in dict of stucture like {"movie":context_doc_contents}}
         response_contexts = {
