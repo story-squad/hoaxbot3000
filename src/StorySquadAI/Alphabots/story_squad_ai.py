@@ -119,7 +119,7 @@ class StorySquadAI:
                 for i in range(len(self.data_dir_glob)):
                     if self.data_dir_glob[i][1] == ":":
                         self.data_dir_glob[i] = list(self.data_dir_glob[i])
-                        self.data_dir_glob[i][0] = self.data_dir_glob[i][0]
+                        self.data_dir_glob[i][0] = self.data_dir_glob[i][0].lower()
                         self.data_dir_glob[i] = "".join(self.data_dir_glob[i])
 
 
