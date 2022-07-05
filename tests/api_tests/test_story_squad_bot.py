@@ -1,5 +1,8 @@
+import pytest
+import shutil
 from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 import os
+
 
 def test_guess():
     this_dir = os.getenv("STORYSQUADAI_PATH")
