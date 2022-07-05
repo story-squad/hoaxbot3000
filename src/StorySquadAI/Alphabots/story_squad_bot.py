@@ -3,17 +3,11 @@ import openai
 
 
 class StorySquadBot:
-    def __init__(self, personality: 'StorySquadAI.Personality', data_dir: str = "data",
-                 engine='curie', name: str = None, moderate: bool = True):
-        self.personality = personality
+    def __init__(self, personality, data_dir: str = "data",
+                 engine='curie', moderate: bool = True):
         self.moderate = moderate
-        if name:
-            self.name = name
-        elif type(personality) is str:
-            self.name = personality
-        else:
-            raise ValueError("No name given for this bot!")
-
+        self.name = personality.name
+        self.personality = personality
         self.context_dir = data_dir
         self.engine_to_use = engine
 

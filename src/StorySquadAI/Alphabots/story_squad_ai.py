@@ -88,6 +88,7 @@ class StorySquadAI:
         responses:
             a dict of PersonalityRequestData objects
         """
+        name: str
         responses: dict[str, 'StorySquadAI.PersonalityRequestData']
 
     def init_error(self, e):
@@ -154,7 +155,7 @@ class StorySquadAI:
             if personality in self.personalities:
                 ctx_dir = os.path.join(self.personalities_dir, personality)
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
-                return StorySquadBot(data_dir=ctx_dir, personality=personality, name=personality)
+                return StorySquadBot(data_dir=ctx_dir, personality=personality)
 
     def load_bot_yaml(self, personality):
         yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
@@ -184,7 +185,7 @@ class StorySquadAI:
             if response_key == 'ai_general':
                 pass
 
-        return StorySquadAI.Personality(responses)
+        return StorySquadAI.Personality(name=personality, responses=responses)
 
     def save_bot(self, bot: StorySquadBot, overwrite: bool = False):
         # create directory
@@ -199,11 +200,11 @@ class StorySquadAI:
             yaml_params[k]["max_tokens"] = v.max_tokens
             yaml_params[k]["temperature"] = v.temperature
             yaml_params[k]["top_p"] = v.top_p
-        yaml.dump(yaml_params, open(yaml_file_name, "w"))
+        yaml.dump(yaml_params, open(yaml_file_name, "w",encoding="utf-8"))
 
         # create context docs
         for k, v in bot.personality.responses.items():
             context_file_name = os.path.join(self.data_dir, "personalities", bot.name, f"{k}.context.txt")
             print(context_file_name)
-            with open(context_file_name, "w") as f:
+            with open(context_file_name, "w",encoding="utf-8") as f:
                 f.write(v.context_doc)
