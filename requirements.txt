@@ -64,7 +64,7 @@ spacy-transformers==1.1.7
 SQLAlchemy==1.4.31
 srsly==2.4.3
 starlette==0.17.1
-StorySquadAI @ file:///./src
+-e ./src/
 thinc==8.0.17
 threadpoolctl==3.0.0
 tokenizers==0.12.1
