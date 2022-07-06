@@ -11,7 +11,7 @@ colorama==0.4.4
 coverage==6.4.1
 cycler==0.11.0
 cymem==2.0.6
-en-core-web-lg @ https://github.com/explosion/spacy-models/releases/download/en_core_web_lg-3.3.0/en_core_web_lg-3.3.0-py3-none-any.whl
+en-core-web-md @ https://github.com/explosion/spacy-models/releases/download/en_core_web_md-3.3.0/en_core_web_md-3.3.0-py3-none-any.whl
 et-xmlfile==1.1.0
 fastapi==0.72.0
 filelock==3.7.1
@@ -63,7 +63,7 @@ spacy-loggers==1.0.2
 SQLAlchemy==1.4.31
 srsly==2.4.3
 starlette==0.17.1
--e ./src/
+-e ./src
 thinc==8.0.17
 threadpoolctl==3.0.0
 tokenizers==0.12.1
