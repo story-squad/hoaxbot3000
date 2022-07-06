@@ -63,7 +63,7 @@ spacy-loggers==1.0.2
 SQLAlchemy==1.4.31
 srsly==2.4.3
 starlette==0.17.1
-StorySquadAI @ file:///E:/story_squad/hoaxbot3000/src
+-e ./src/
 thinc==8.0.17
 threadpoolctl==3.0.0
 tokenizers==0.12.1
