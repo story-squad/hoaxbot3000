@@ -81,23 +81,60 @@ class StorySquadBot:
         response = self.wrapped_completion(**kwargs)
         return response
 
-    def wrapped_completion(self, data=None, **kwargs):
+    def filter_factual_response(self,possible_response: str):
+        """
+        Returns -1 if the response IS factual, otherwise returns the response that it was given.
+        :return:
+        """
+        return possible_response
 
+
+    def wrapped_completion(self, test=None, data=None, **kwargs):
+        """
+        Wraps the openai.Engine.search function to handle the case where the response is not moderate.
+        :param test: used for testing purposes
+        :param data:
+        :param kwargs:
+        :return:
+        """
         if data is None:
             data = list([0])
 
-        def get_response_result(**_kwargs):
+        def get_response_result(test=None, **_kwargs):
+            """
+            Returns the response result from the openai.Engine.search function.
+            and -1 if the response is not moderate.
+            :param test: used for testing purposes.
+            :param _kwargs:
+            :return:
+            """
+            if test is not None:
+                return test, self.moderate_maybe(
+                    self.filter_factual_response(
+                        test
+                    ))
+
             _response = openai.Completion.create(**_kwargs)
             response_text = _response["choices"][0]["text"]
-            _result = self.moderate_maybe(response_text)
-            return response_text, _result
 
-        response, result = get_response_result(**kwargs)
+            # If the response is not moderate, return -1
+            if self.moderate_maybe(response_text) ==-1:
+                return response_text, -1
 
+            # if the response does not pass the fact recall test, return -1
+            if self.filter_factual_response(response_text) == -1:
+                return response_text, -1
+
+            return response_text, response_text
+
+        response, result = get_response_result(test, **kwargs)
+
+        #try to get the response again if it is not moderate
         if result is not response:
             data[0] += 1
             return self.wrapped_completion(data, **kwargs)
 
+        # if after 10 tries the response is still not moderate, return this response
         if data[0] == 10:
             return """@#%!@#!@# !#@! !#!@%#@$#^ !@#!@ V!@! $%#@$@#$#!"""
 
@@ -125,12 +162,12 @@ class StorySquadBot:
             presence_penalty=0,
             stop="."
         )
-        #response = self.wrapped_completion()
-        #return response
+        # response = self.wrapped_completion()
+        # return response
 
         return f'{prompt} :: {response}.'
 
-    def thing(self, prompt: str):
+    def thing(self, prompt: str, test: str = None):
         response_name = "thing"
         kwargs = {
             "engine": self.engine_to_use,
@@ -141,7 +178,7 @@ class StorySquadBot:
             "stop": ["C: ", "\n\n"]
         }
         kwargs = {k: v for k, v in kwargs.items() if v != 'None'}
-        response = self.wrapped_completion(**kwargs)
+        response = self.wrapped_completion(test,**kwargs)
         return response
 
     def movie(self, movie: str):

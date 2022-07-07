@@ -2,6 +2,23 @@ import pytest
 import shutil
 from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 import os
+import spacy
+nlp=spacy.load("en_core_web_md")
+
+
+def test_bot_fact_recall_filter():
+    """
+    test that the bot does not re iterate the know definition
+    """
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
+    hoax_api = StorySquadAI(data_dir=this_data_dir)
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
+    result = bubble_testbot.thing("apple",test ="a fruit")
+    p_nlp = nlp("apple")
+    r_nlp = nlp(result)
+    similarity = p_nlp.similarity(r_nlp)
+    assert similarity < 0.33
 
 
 def test_guess():
