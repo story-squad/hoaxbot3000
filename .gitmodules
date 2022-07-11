@@ -1,0 +1,3 @@
+[submodule "submodules/StSq-LLM-Wrapper"]
+	path = submodules/StSq-LLM-Wrapper
+	url = git@github.com:story-squad/StSq-LLM-Wrapper.git
