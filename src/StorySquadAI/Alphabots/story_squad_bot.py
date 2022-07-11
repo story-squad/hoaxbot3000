@@ -1,5 +1,6 @@
 import pandas as pd
 import openai
+import spacy
 
 
 class StorySquadBot:
@@ -10,6 +11,7 @@ class StorySquadBot:
         self.personality = personality
         self.context_dir = data_dir
         self.engine_to_use = engine
+        self.nlp_eng_med = spacy.load("en_core_web_md")
 
     def moderate_maybe(self, possible_response: str):
         """returns -1 if the response is likely not moderate, otherwise returns the response that it was given"""
@@ -81,7 +83,7 @@ class StorySquadBot:
         response = self.wrapped_completion(**kwargs)
         return response
 
-    def filter_factual_response(self,possible_response: str):
+    def filter_factual_response(self,prompt:str,possible_response: str):
         """
         Returns -1 if the response IS factual, otherwise returns the response that it was given.
         :return:
@@ -115,10 +117,11 @@ class StorySquadBot:
                     ))
 
             _response = openai.Completion.create(**_kwargs)
+            openai.S
             response_text = _response["choices"][0]["text"]
 
             # If the response is not moderate, return -1
-            if self.moderate_maybe(response_text) ==-1:
+            if self.moderate_maybe(response_text) == -1:
                 return response_text, -1
 
             # if the response does not pass the fact recall test, return -1
@@ -134,12 +137,13 @@ class StorySquadBot:
             data[0] += 1
             return self.wrapped_completion(data, **kwargs)
 
-        # if after 10 tries the response is still not moderate, return this response
+        # if after 10 tries the response is still not moderate or it has failed the other filters, return this response
         if data[0] == 10:
             return """@#%!@#!@# !#@! !#!@%#@$#^ !@#!@ V!@! $%#@$@#$#!"""
 
         return result
 
+    # TODO: make sure to tie bot personality to choices
     def guess(self, prompt: str, choices: list):
         response = openai.Engine(self.engine_to_use).search(
             documents=choices,
