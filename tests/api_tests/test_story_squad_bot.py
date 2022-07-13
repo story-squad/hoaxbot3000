@@ -3,7 +3,15 @@ import shutil
 from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 import os
 import spacy
-nlp=spacy.load("en_core_web_md")
+from StSqLLMWrapper import llmwrapper
+
+nlp = spacy.load("en_core_web_md")
+
+
+def test_llm_wrapper_install():
+    llmw = llmwrapper.LLMWrapper('openai')
+    response = llmw.completion('what is a snuffleupagus?')
+    assert type(response) == str
 
 
 def test_bot_fact_recall_filter():
@@ -12,9 +20,9 @@ def test_bot_fact_recall_filter():
     """
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir)
+    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
-    result = bubble_testbot.thing("apple",test ="a fruit")
+    result = bubble_testbot.thing("apple", test="a fruit")
     p_nlp = nlp("apple")
     r_nlp = nlp(result)
     similarity = p_nlp.similarity(r_nlp)
@@ -24,7 +32,7 @@ def test_bot_fact_recall_filter():
 def test_guess():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir)
+    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.guess("what is a snuffleupagus?", ["dfasfasd", "werewqrwe", "werwr"])
     assert len(result) > 0
@@ -33,11 +41,26 @@ def test_guess():
 def test_person():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir)
+    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.person("Bob")
     assert len(result) > 0
 
+def test_thing():
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
+    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
+    result = bubble_testbot.thing("apple")
+    assert len(result) > 0
+
+def test_movie():
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
+    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
+    result = bubble_testbot.movie("The Matrix")
+    assert len(result) > 0
 
 def test_invalid_STORYSQUADAI_PATH():
     old = os.environ["STORYSQUADAI_PATH"]
@@ -120,7 +143,7 @@ def test_missing_bot_yaml():
 def test_save_bot():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir)
+    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     bubble_testbot.name = "test_save_bot"
     hoax_api.save_bot(bubble_testbot)
@@ -128,6 +151,4 @@ def test_save_bot():
     hoax_api = StorySquadAI(data_dir=this_data_dir)
     bubble_testbot = hoax_api.create_bot_with_personality("test_save_bot")
     # delete the bot from the directory using shutil.rmtree
-    shutil.rmtree(os.path.join(this_data_dir, "personalities","test_save_bot"))
-
-
+    shutil.rmtree(os.path.join(this_data_dir, "personalities", "test_save_bot"))
