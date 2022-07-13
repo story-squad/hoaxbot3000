@@ -12,15 +12,6 @@ from yaml import CLoader as Loader
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
-start_sequence = "The answer is:"
-hoax = "apple"
-choices_default = ["1) squishy fruit",
-                   "2) square vegetable",
-                   "3) purple integrated circuit"]
-prompt_default = "apple"
-engine_to_use = 'curie'
-
-
 class StorySquadAI:
     """
     Class which manages the word hoax AI environment and provides access to AI
