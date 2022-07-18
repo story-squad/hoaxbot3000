@@ -6,6 +6,7 @@ import os
 import openai
 import yaml
 import platform
+from StSqLLMWrapper.llmwrapper import LLMWrapper
 from src.StorySquadAI.Alphabots.story_squad_bot import StorySquadBot
 
 from yaml import CLoader as Loader
@@ -85,7 +86,14 @@ class StorySquadAI:
     def init_error(self, e):
         raise Exception(e)
 
-    def __init__(self, data_dir=f"./data", **kwargs):
+    def __init__(self, llm_provider_str,data_dir=f"./data", **kwargs):
+        if "openai" in llm_provider_str:
+            self.llm_provider_str = "openai"
+
+        if self.llm_provider_str== "openai":
+            self.llm_wrap = LLMWrapper(API_NAME="openai",completion_model_name = "text-babbage-001")
+
+
         # self.data_dir = os.path.realpath(data_dir)
         self.data_dir = data_dir
         self.personalities_dir = os.path.realpath(os.path.join(data_dir, "personalities"))
@@ -146,7 +154,7 @@ class StorySquadAI:
             if personality in self.personalities:
                 ctx_dir = os.path.join(self.personalities_dir, personality)
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
-                return StorySquadBot(data_dir=ctx_dir, personality=personality)
+                return StorySquadBot(data_dir=ctx_dir, personality=personality,llmwrapper_for_bot=self.llm_wrap)
 
     def load_bot_yaml(self, personality):
         yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")

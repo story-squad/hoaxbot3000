@@ -3,64 +3,71 @@ import shutil
 from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
 import os
 import spacy
-from StSqLLMWrapper import llmwrapper
+from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest
 
 nlp = spacy.load("en_core_web_md")
 
 
 def test_llm_wrapper_install():
-    llmw = llmwrapper.LLMWrapper('openai')
+    llmw = LLMWrapper('openai')
     response = llmw.completion('what is a snuffleupagus?')
-    assert type(response) == str
+    assert type(response) is LLMResponse
+    assert type(response.completion) is str
 
 
 def test_bot_fact_recall_filter():
     """
-    test that the bot does not re iterate the know definition
+    test that the bot does not re iterate the known definition
     """
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
-    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
-    result = bubble_testbot.thing("apple", test="a fruit")
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v6")
+
+    result = bubble_testbot.thing("apple")
+
     p_nlp = nlp("apple")
     r_nlp = nlp(result)
     similarity = p_nlp.similarity(r_nlp)
-    assert similarity < 0.33
+    print(result)
+    assert similarity < 0.4
 
 
-def test_guess():
+def test_thing():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
-    result = bubble_testbot.guess("what is a snuffleupagus?", ["dfasfasd", "werewqrwe", "werwr"])
+    result = bubble_testbot.thing("apple")
+    assert len(result) > 0
+
+
+def test_movie():
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
+    result = bubble_testbot.movie("The Matrix")
     assert len(result) > 0
 
 
 def test_person():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.person("Bob")
     assert len(result) > 0
 
-def test_thing():
+
+def test_guess():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
-    result = bubble_testbot.thing("apple")
+    result = bubble_testbot.guess("what is a snuffleupagus?", ["dfasfasd", "werewqrwe", "werwr"])
     assert len(result) > 0
 
-def test_movie():
-    this_dir = os.getenv("STORYSQUADAI_PATH")
-    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
-    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
-    result = bubble_testbot.movie("The Matrix")
-    assert len(result) > 0
 
 def test_invalid_STORYSQUADAI_PATH():
     old = os.environ["STORYSQUADAI_PATH"]
@@ -143,7 +150,7 @@ def test_missing_bot_yaml():
 def test_save_bot():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir,llm_provider_str='openai')
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     bubble_testbot.name = "test_save_bot"
     hoax_api.save_bot(bubble_testbot)
