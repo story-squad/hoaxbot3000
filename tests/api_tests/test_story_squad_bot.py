@@ -32,7 +32,6 @@ def test_bot_fact_recall_filter():
     print(result)
     assert similarity < 0.4
 
-
 def test_thing():
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
@@ -65,7 +64,10 @@ def test_guess():
     this_data_dir = os.path.join(this_dir, "Alphabots", "data")
     hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
-    result = bubble_testbot.guess("what is a snuffleupagus?", ["dfasfasd", "werewqrwe", "werwr"])
+    result = bubble_testbot.guess("what is an apple?", ["a juicy red or green fruit",
+                                                        "a type of werewolf",
+                                                        "something in the center of my eye",
+                                                        "a type of animal"])
     assert len(result) > 0
 
 
@@ -155,7 +157,7 @@ def test_save_bot():
     bubble_testbot.name = "test_save_bot"
     hoax_api.save_bot(bubble_testbot)
     # create a new instance of StorySquadAI to test loading the bot
-    hoax_api = StorySquadAI(data_dir=this_data_dir)
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("test_save_bot")
     # delete the bot from the directory using shutil.rmtree
     shutil.rmtree(os.path.join(this_data_dir, "personalities", "test_save_bot"))

@@ -91,7 +91,7 @@ class StorySquadAI:
             self.llm_provider_str = "openai"
 
         if self.llm_provider_str== "openai":
-            self.llm_wrap = LLMWrapper(API_NAME="openai",completion_model_name = "text-babbage-001")
+            self.llm_wrap = LLMWrapper(api_name="openai", completion_model_name="text-babbage-001")
 
 
         # self.data_dir = os.path.realpath(data_dir)

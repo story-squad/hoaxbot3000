@@ -22,77 +22,97 @@ class StorySquadBot:
             return data_in
         else:
             if data_in.__class__ == LLMRequest:
-                content_to_classify = data_in.prompt
+                if data_in.prompt:
+                    content_to_classify_list = [data_in.prompt]
 
-                def data_setter(x):
-                    setattr(data_in, "prompt", x)
+                    def data_setter(x):
+                        setattr(data_in, "prompt", x)
+
+                elif data_in.query:
+                    content_to_classify_list = data_in.documents
+
+                    def data_setter(x):
+                        setattr(data_in, "documents", x)
 
             elif data_in.__class__ == LLMResponse:
                 if data_in.completion:
-                    content_to_classify = data_in.completion
+                    content_to_classify_list = [data_in.completion]
                 else:
-                    content_to_classify = data_in.raw_response
+                    content_to_classify_list = [data_in.raw_response]
 
                 def data_setter(x):
                     setattr(data_in, "response", x)
-
-            response = openai.Completion.create(
-                engine="content-filter-alpha",
-                prompt="<|endoftext|>" + content_to_classify + "\n--\nLabel:",
-                temperature=0,
-                max_tokens=1,
-                top_p=0,
-                logprobs=10
-            )
-            output_label = response["choices"][0]["text"]
-
-            # This is the probability at which we evaluate that a "2" is likely real
-            # vs. should be discarded as a false positive
-            toxic_threshold = -0.355
-
-            if output_label == "2":
-                # If the model returns "2", return its confidence in 2 or other output-labels
-                logprobs = response["choices"][0]["logprobs"]["top_logprobs"][0]
-
-                # If the model is not sufficiently confident in "2",
-                # choose the most probable of "0" or "1"
-                # Guaranteed to have a confidence for 2 since this was the selected token.
-                if logprobs["2"] < toxic_threshold:
-                    logprob_0 = logprobs.get("0", None)
-                    logprob_1 = logprobs.get("1", None)
-
-                    # If both "0" and "1" have probabilities, set the output label
-                    # to whichever is most probable
-                    if logprob_0 is not None and logprob_1 is not None:
-                        if logprob_0 >= logprob_1:
-                            output_label = "0"
-                        else:
-                            output_label = "1"
-                    # If only one of them is found, set output label to that one
-                    elif logprob_0 is not None:
-                        output_label = "0"
-                    elif logprob_1 is not None:
-                        output_label = "1"
-
-                    # If neither "0" or "1" are available, stick with "2"
-                    # by leaving output_label unchanged.
-
-            # if the most probable token is none of "0", "1", or "2"
-            # this should be set as unsafe
-            if output_label not in ["0", "1", "2"]:
-                output_label = "2"
-
-            if output_label != "2":
-                return data_in
             else:
-                data_setter("non moderate response or reqeust")
+                print("Error: data_in is not a LLMRequest or LLMResponse")
+
+            label_content_tuples = []
+            for content_to_classify in content_to_classify_list:
+                response = openai.Completion.create(
+                    engine="content-filter-alpha",
+                    prompt="<|endoftext|>" + content_to_classify + "\n--\nLabel:",
+                    temperature=0,
+                    max_tokens=1,
+                    top_p=0,
+                    logprobs=10
+                )
+
+                output_label = response["choices"][0]["text"]
+                logprobs = response["choices"][0]["logprobs"]["top_logprobs"][0]
+                output_label = self.moderation_score(logprobs, output_label)
+                label_content_tuples.append((output_label, content_to_classify))
+            if not len(label_content_tuples) > 1:
+                output_label = label_content_tuples[0][0]
+                if output_label != "2":
+                    return data_in
+                else:
+                    data_setter("non moderate response or reqeust")
+                    return data_in
+            else:
+                outlist = [tuples[1] for tuples in label_content_tuples]
+                data_setter(outlist)
                 return data_in
 
+    def moderation_score(self, logprobs, output_label):
+        # This is the probability at which we evaluate that a "2" is likely real
+        # vs. should be discarded as a false positive
+        toxic_threshold = -0.355
+        if output_label == "2":
+            # If the model returns "2", return its confidence in 2 or other output-labels
+
+            # If the model is not sufficiently confident in "2",
+            # choose the most probable of "0" or "1"
+            # Guaranteed to have a confidence for 2 since this was the selected token.
+            if logprobs["2"] < toxic_threshold:
+                logprob_0 = logprobs.get("0", None)
+                logprob_1 = logprobs.get("1", None)
+
+                # If both "0" and "1" have probabilities, set the output label
+                # to whichever is most probable
+                if logprob_0 is not None and logprob_1 is not None:
+                    if logprob_0 >= logprob_1:
+                        output_label = "0"
+                    else:
+                        output_label = "1"
+                # If only one of them is found, set output label to that one
+                elif logprob_0 is not None:
+                    output_label = "0"
+                elif logprob_1 is not None:
+                    output_label = "1"
+
+                # If neither "0" or "1" are available, stick with "2"
+                # by leaving output_label unchanged.
+        # if the most probable token is none of "0", "1", or "2"
+        # this should be set as unsafe
+        if output_label not in ["0", "1", "2"]:
+            output_label = "2"
+        return output_label
 
     def filter_factual(self, prompt: LLMRequest, response: LLMResponse = None):
         """
-        returns -1 if the response is likely too factual, otherwise returns 0
-
+        filter factual responses
+        :param prompt: the prompt that was used to generate the response
+        :param response: the response to filter
+        :return: negative score if the response is factual, otherwise a positive score
         """
 
         doc_a = prompt.prompt
@@ -111,8 +131,8 @@ class StorySquadBot:
         print(f'Definition similarity: {definition_similarity_a} {definition_similarity_b}')
 
         if sim > 0.4:
-            return -1*sim
-        return response
+            return -1 * sim
+        return 1
 
     def nlp_pre_process(self, request: LLMRequest):
         """
@@ -135,33 +155,43 @@ class StorySquadBot:
 
     # TODO: make sure to tie bot personality to choices
     def guess(self, prompt: str, choices: list):
-        response = openai.Engine(self.engine_to_use).search(
-            documents=choices,
-            query=prompt
-        )
+        """
+        structured as {search pick} because {completion result}
+        :param prompt:
+        :param choices:
+        :return:
+        """
 
-        df = pd.DataFrame(response["data"])
-        df.sort_values(by="score", inplace=True)
-        pick = choices[df.iloc[-1].document]
+        checked = self.nlp_pre_process(LLMRequest(documents=choices, query=prompt))
+        result = self.llm.search(checked)
+
+        preferred_place = 1  # index 0 is the highest similarity
+        pick = result[min(preferred_place, len(result) - 1)]
+
         context = ".".join(choices)
         prompt = f"I'm going to go with {pick} because"
-        response = self.nlp_process(
-            engine=self.engine_to_use,
-            prompt=context + prompt,
-            temperature=1,
-            max_tokens=40,
-            top_p=.7,
-            best_of=1,
-            frequency_penalty=.2,
-            presence_penalty=0,
-            stop="."
-        )
-        # response = self.wrapped_completion()
-        # return response
 
-        return f'{prompt} :: {response}.'
+        kwargs = {
+            "prompt": prompt,
+            "context": context,
+            "temperature": 1,
+            "max_tokens": 40,
+            "top_p": .7,
+            "best_of": 1,
+            "frequency_penalty": .2,
+            "presence_penalty": 0,
+            "stop": "."
+        }
+        request = LLMRequest(**kwargs)
+        checked = self.nlp_pre_process(request)
 
-    def get_response_and_score(self,checked):
+        a = [(score, result) for score, result in self.get_response_and_score(checked)]
+        a.sort(key=lambda x: x[0], reverse=True)
+        r_checked = a[0][1]
+
+        return f'{prompt} :: {r_checked.completion}.'
+
+    def get_response_and_score(self, checked):
         found = False
         for _ in range(3):
             response = self.llm.completion(kwargs=checked)
