@@ -1,3 +1,4 @@
 /.idea/
 /venv/
 /.env
+/src/StorySquadAI/Alphabots/data/personalities/test_save_bot/
