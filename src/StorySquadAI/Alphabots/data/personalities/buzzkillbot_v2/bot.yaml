@@ -1,16 +1,16 @@
 ai_general:
 movie:
-  logit_bias: None
+  logit_bias: null
   max_tokens: 46
   temperature: 0.65
-  top_p: None
+  top_p: null
 person:
-  logit_bias: None
+  logit_bias: null
   max_tokens: 54
   temperature: 0.65
-  top_p: None
+  top_p: null
 thing:
-  logit_bias: None
+  logit_bias: null
   max_tokens: 22
   temperature: 0.65
-  top_p: None
+  top_p: null
