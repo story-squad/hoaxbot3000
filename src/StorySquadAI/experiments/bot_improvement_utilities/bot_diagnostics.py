@@ -1,6 +1,6 @@
 import pandas as pd
 
-from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
+from src.StorySquadAI.story_squad_ai import StorySquadAI
 import matplotlib.pyplot as plt
 
 

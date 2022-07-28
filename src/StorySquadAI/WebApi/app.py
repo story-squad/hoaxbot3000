@@ -1,8 +1,7 @@
-import datetime
 import os.path
 
 from enum import Enum
-from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
+from src.StorySquadAI.story_squad_ai import StorySquadAI
 from fastapi import FastAPI, Query, Depends
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import HTMLResponse
@@ -52,7 +51,7 @@ def setup():
     alphabot_data_dir = os.path.join(web_api_dir, "Alphabots", "data")
     web_api_dir = os.path.join(web_api_dir, "WebApi")
 
-    hoax_api = StorySquadAI(data_dir=alphabot_data_dir)
+    hoax_api = StorySquadAI(data_dir=alphabot_data_dir,llm_provider_str="openai")
 
     app = FastAPI()
 
@@ -84,7 +83,7 @@ def setup():
 
 base_path = "/{api_key}"
 bots = {}
-setup()
+#setup()
 
 
 app = setup()

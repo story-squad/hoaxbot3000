@@ -1,0 +1,18 @@
+ai_general:
+  context_loader_type: 1
+  name: "BubbleBot_v7"
+movie:
+  logit_bias: null
+  max_tokens: 80
+  temperature: 0.75
+  top_p: null
+person:
+  logit_bias: null
+  max_tokens: 80
+  temperature: 0.75
+  top_p: null
+thing:
+  logit_bias: null
+  max_tokens: 80
+  temperature: 0.75
+  top_p: null

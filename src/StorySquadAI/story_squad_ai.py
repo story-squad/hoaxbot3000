@@ -6,12 +6,16 @@ import os
 import openai
 import yaml
 import platform
+from StorySquadAI import filters
+from StorySquadAI import StorySquadBot
 from StSqLLMWrapper.llmwrapper import LLMWrapper
-from src.StorySquadAI.Alphabots.story_squad_bot import StorySquadBot
 
 from yaml import CLoader as Loader
+from StorySquadAI.Alphabots.exceptions import StorySquadAIException
+from StorySquadAI.Alphabots.bot_context_loaders import load_context_doc, is_context_loader_supported
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
+
 
 class StorySquadAI:
     """
@@ -86,13 +90,12 @@ class StorySquadAI:
     def init_error(self, e):
         raise Exception(e)
 
-    def __init__(self, llm_provider_str,data_dir=f"./data", **kwargs):
+    def __init__(self, llm_provider_str, data_dir=f"./data", **kwargs):
         if "openai" in llm_provider_str:
             self.llm_provider_str = "openai"
 
-        if self.llm_provider_str== "openai":
-            self.llm_wrap = LLMWrapper(api_name="openai", completion_model_name="text-babbage-001")
-
+        if self.llm_provider_str == "openai":
+            self.llm_wrap = LLMWrapper(api_name="openai", completion_model_name="text-curie-001")
 
         # self.data_dir = os.path.realpath(data_dir)
         self.data_dir = data_dir
@@ -109,7 +112,7 @@ class StorySquadAI:
 
         data_dir_list = "\n".join([f'{e}' for e in self.data_dir_glob])
 
-        #data_dir_list = f'\n data_dir: {self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str}{data_dir_list}'
+        # data_dir_list = f'\n data_dir: {self.data_dir} \n data_dir_glob_str: {self.data_dir_glob_str}{data_dir_list}'
 
         if "win" in platform.system().lower():
             if self.personalities_dir[1] == ":":
@@ -122,7 +125,6 @@ class StorySquadAI:
                         self.data_dir_glob[i][0] = self.data_dir_glob[i][0].lower()
                         self.data_dir_glob[i] = "".join(self.data_dir_glob[i])
 
-
         True if self.personalities_dir in self.data_dir_glob else self.init_error(
             f"invalid data dir \n {self.personalities_dir} \n {os.path.realpath(self.data_dir)}\n {data_dir_list} ")
 
@@ -131,6 +133,14 @@ class StorySquadAI:
         return [os.path.basename(personality) for personality in self.personalities_dir_glob]
 
     def check_personalities(self):
+        """
+
+        """
+        # iterates over all personalities in the personalities directory
+        # checks if the personality directory exists
+        # and that the bot.yaml file exists
+        # and that the context_loader_type is supported
+
         for personality in self.personalities_dir_glob:
             personality = os.path.basename(personality)
             personality_glob = glob.glob(os.path.join(self.personalities_dir, personality, "*"))
@@ -141,7 +151,16 @@ class StorySquadAI:
                     if item != "ai_general":
                         if item + '.context.txt' not in personality_glob:
                             raise Exception(f"Error in ai structure -> missing {item}.context.txt for {personality}")
-                pass
+                if "ai_general" in yaml_contents:
+                    if type(yaml_contents["ai_general"]) is dict:
+                        if "context_loader_type" not in yaml_contents["ai_general"]:
+                            print(f"Warning: missing context_loader_type in {personality}")
+                        else:
+                            if not is_context_loader_supported(yaml_contents["ai_general"]["context_loader_type"]):
+                                raise StorySquadAIException(f"Error in ai structure -> unsupported context_loader_type "
+                                                            f"{yaml_contents['ai_general']['context_loader_type']}"
+                                                            f" for {personality}")
+
                 if len(personality_glob) > len(yaml_contents):
                     raise Exception(f"Extra files in {personality} personality directory")
 
@@ -154,36 +173,13 @@ class StorySquadAI:
             if personality in self.personalities:
                 ctx_dir = os.path.join(self.personalities_dir, personality)
                 personality = self.load_personality_from_data_dir(personality, create_new=True)
-                return StorySquadBot(data_dir=ctx_dir, personality=personality,llmwrapper_for_bot=self.llm_wrap)
-
-    def load_bot_yaml(self, personality):
-        yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
-        details = yaml.load(open(yaml_file_path, encoding="utf-8", mode="r"), Loader)
-        return details
+                return StorySquadBot(data_dir=ctx_dir, personality=personality, llmwrapper_for_bot=self.llm_wrap)
 
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
-        print(f'Loading {personality}..')
-        bot_config_yaml = self.load_bot_yaml(personality)
-
-        # results in dict of stucture like {"movie":context_doc_contents}}
-        response_contexts = {
-            response: open(os.path.join(self.personalities_dir, personality, f"{response}.context.txt"),
-                           encoding="utf-8").read()
-            for response in bot_config_yaml if response != "ai_general"}
-
-        responses = {}
-        for response_key, response_dict in bot_config_yaml.items():
-            if response_key != "ai_general":
-                responses[response_key] = StorySquadAI.PersonalityRequestData(
-                    context_doc=response_contexts[response_key],
-                    temperature=response_dict["temperature"],
-                    max_tokens=response_dict["max_tokens"],
-                    top_p=response_dict["top_p"],
-                    logit_bias=response_dict["logit_bias"])
-
-            if response_key == 'ai_general':
-                pass
-
+        yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
+        responses = load_context_doc(yaml_file_path)
+        for response_type in responses:
+            responses[response_type] = StorySquadAI.PersonalityRequestData(**responses[response_type])
         return StorySquadAI.Personality(name=personality, responses=responses)
 
     def save_bot(self, bot: StorySquadBot, overwrite: bool = False):
@@ -199,11 +195,11 @@ class StorySquadAI:
             yaml_params[k]["max_tokens"] = v.max_tokens
             yaml_params[k]["temperature"] = v.temperature
             yaml_params[k]["top_p"] = v.top_p
-        yaml.dump(yaml_params, open(yaml_file_name, "w",encoding="utf-8"))
+        yaml.dump(yaml_params, open(yaml_file_name, "w", encoding="utf-8"))
 
         # create context docs
         for k, v in bot.personality.responses.items():
             context_file_name = os.path.join(self.data_dir, "personalities", bot.name, f"{k}.context.txt")
             print(context_file_name)
-            with open(context_file_name, "w",encoding="utf-8") as f:
+            with open(context_file_name, "w", encoding="utf-8") as f:
                 f.write(v.context_doc)
