@@ -1,36 +1,12 @@
 import pytest
 import shutil
-from src.StorySquadAI.Alphabots.story_squad_ai import StorySquadAI
+from src.StorySquadAI.story_squad_ai import StorySquadAI, StorySquadAIException
 import os
 import spacy
-from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest
+from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse
 
 nlp = spacy.load("en_core_web_md")
 
-
-def test_llm_wrapper_install():
-    llmw = LLMWrapper('openai')
-    response = llmw.completion('what is a snuffleupagus?')
-    assert type(response) is LLMResponse
-    assert type(response.completion) is str
-
-
-def test_bot_fact_recall_filter():
-    """
-    test that the bot does not re iterate the known definition
-    """
-    this_dir = os.getenv("STORYSQUADAI_PATH")
-    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
-    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v6")
-
-    result = bubble_testbot.thing("apple")
-
-    p_nlp = nlp("apple")
-    r_nlp = nlp(result)
-    similarity = p_nlp.similarity(r_nlp)
-    print(result)
-    assert similarity < 0.4
 
 def test_thing():
     this_dir = os.getenv("STORYSQUADAI_PATH")
@@ -39,6 +15,58 @@ def test_thing():
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.thing("apple")
     assert len(result) > 0
+
+def test_unsupported_bot_context_type_should_fail():
+    old = os.environ["STORYSQUADAI_PATH"]
+    this_test_file_path, _ = os.path.split(__file__)
+    test_fixture_path = os.path.join(this_test_file_path,
+                                     "test_fixtures",
+                                     "unsupported_bot_context_type_should_fail",
+                                     "Alphabots",
+                                     "data"
+                                     )
+    # assert that the path is valid
+    assert os.path.exists(test_fixture_path)
+
+    # set the environment variable to the test fixture path
+    os.environ["STORYSQUADAI_PATH"] = test_fixture_path
+
+    # create a new StorySquadAI instance with the test fixture path
+
+    with pytest.raises(StorySquadAIException) as e_info:
+        try:
+            StorySquadAI(data_dir=test_fixture_path, llm_provider_str='openai')
+        except Exception as e:
+            if "unsupported context type" in str(e):
+                raise Exception(e)
+            else:
+                raise e
+
+    # reset the environment variable to the old value
+    os.environ["STORYSQUADAI_PATH"] = old
+
+def test_llm_wrapper_install():
+    llmw = LLMWrapper('openai')
+    response = llmw.completion('what is a snuffleupagus?')
+    assert type(response) is LLMResponse
+    assert type(response.completion) is str
+
+def test_bot_fact_recall_filter():
+    """
+    test that the bot does not re iterate the known definition
+    """
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "Alphabots", "data")
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v7")
+
+    result = bubble_testbot.thing("apple")
+
+    p_nlp = nlp("apple")
+    r_nlp = nlp(result)
+    similarity = p_nlp.similarity(r_nlp)
+    print(result)
+    assert similarity < 0.4
 
 
 def test_movie():
