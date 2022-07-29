@@ -4,7 +4,7 @@ import json
 
 from setuptools import glob
 
-from src.StorySquadAI.Alphabots import story_squad_ai as StorySquadAI
+from src.StorySquadAI import story_squad_ai as StorySquadAI
 from src.StorySquadAI.WebApi.bot_personalities import BotName as bot_names
 from src.StorySquadAI.experiments.bot_improvement_utilities.generate_responses_to_grade import \
     get_extended_query_list

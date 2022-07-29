@@ -5,7 +5,7 @@ import time
 import yaml
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
-#from StorySquadAI.WebApi import app
+# from StorySquadAI.WebApi import app
 from src.StorySquadAI.WebApi import app
 import requests
 
@@ -47,7 +47,7 @@ def test_heroku_deployment_should_serve():
     procfile_dir = find_file_in_parent_dirs("Procfile", ".", 10)
     assert procfile_dir != -1
     web_command = read_procfile(procfile_dir)["web"]
-    assert uvicorn_tester(web_command,working_dir = procfile_dir, port="8080", app_name="app") == 0
+    assert uvicorn_tester(web_command, working_dir=procfile_dir, port="8080", app_name="app") == 0
 
 
 def test_setup():
@@ -58,6 +58,7 @@ def test_setup():
 def uvicorn_tester(uvicorn_command, working_dir, port="8080", app_name="app"):
     os.chdir(working_dir)
     uvicorn_command = uvicorn_command.replace("$PORT", port)
+    uvicorn_command += " > uvi_test.out"
     print("\nExecuting command: " + uvicorn_command + "\n")
     try:
         proc_uvicorn = subprocess.Popen(uvicorn_command)

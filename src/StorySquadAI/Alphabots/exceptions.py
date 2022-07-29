@@ -1,0 +1,2 @@
+class StorySquadAIException(Exception):
+    pass
