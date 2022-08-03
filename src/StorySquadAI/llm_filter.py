@@ -43,7 +43,7 @@ class MinimumLengthProcessor(LLMReqResProcessor):
             else:
                 report_list[i][0] = (-1, modify_list[i][0])
 
-        return min([i[0] for i in report_list])
+        return min([i[0][0] for i in report_list])
 
 class FactualProcessor(LLMReqResProcessor):
     """provides text_processed_data of the form {factual_processor: [(score, text_a,text_b), ...]} and
