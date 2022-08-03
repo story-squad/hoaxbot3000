@@ -2,7 +2,7 @@ import os
 import yaml
 from yaml import Loader as loader
 
-from StorySquadAI.Alphabots.exceptions import StorySquadAIException
+from StorySquadAI.exceptions import StorySquadAIException
 
 
 class DefaultContextLoader:
@@ -12,6 +12,7 @@ class DefaultContextLoader:
     def __init__(self, yaml_path: str):
         self.config = yaml.load(open(yaml_path, encoding="utf-8", mode="r"), loader)
         self.personalities_dir = yaml_path.split("bot.yaml")[0]
+        self.yaml_path = yaml_path
         if "name" in self.config:
             self.name = self.config["name"]
         else:
@@ -70,12 +71,13 @@ class TextContextLoaderV1(DefaultContextLoader):
     def reshape_context_doc(self, context_doc):
         sections = context_doc.split("\n\n")
         out = []
-        for section in sections:
+        for i,section in enumerate(sections):
             lines = section.splitlines()
-            if len(lines) != 3:
+            if (len(lines) != 2) and(len(sections) != i+1):
                 raise StorySquadAIException(f"Invalid context doc format: {context_doc}")
-            out.append("C: " + "[CONTEXT_PROMPT_TOKEN]")
-            out.append(lines[1])
+            if len(sections) != i+1:
+                out.append("C: " + "[CONTEXT_PROMPT_TOKEN]")
+                out.append(lines[1])
         return "\n".join(out)
 
     def load_context(self):
