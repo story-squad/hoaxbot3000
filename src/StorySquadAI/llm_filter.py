@@ -1,14 +1,13 @@
-from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest, LLMProcessor
+from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest, \
+    LLMReqResProcessor, LLMResProcessor, LLMReqResProcessor
 import openai
 
 
-class ModerateProcessor(LLMProcessor):
+class ModerateProcessor(LLMReqResProcessor):
     """provides _processed_data of the form {'moderation_processor':[(score,text), ...]}"""
-    def __init__(self, name: str):
-        self.name = name
 
-    def get_moderation(content_to_classify:str):
-        r = openai.Completion.create(
+    def get_moderation(self, content_to_classify: str):
+        moderation = openai.Completion.create(
             engine="content-filter-alpha",
             prompt="<|endoftext|>" + content_to_classify + "\n--\nLabel:",
             temperature=0,
@@ -16,127 +15,70 @@ class ModerateProcessor(LLMProcessor):
             top_p=0,
             logprobs=10
         )
+        logprobs = moderation["choices"][0]["logprobs"]["top_logprobs"][0]
+        output_label = moderation["choices"][0]["text"]
+        r = moderation_score(logprobs, output_label)
         return r
 
-    def __call__(self, request: LLMRequest, response: LLMResponse):
-        """ gets moderation data on each document and response"""
-        for doc in request.documents:
-            moderation = self.get_moderation(doc)
-            logprobs = moderation["choices"][0]["logprobs"]["top_logprobs"][0]
-            output_label = moderation["choices"][0]["text"]
-            request.documents_processed_data.append((moderation_score(moderation, logprobs, output_label),doc))
+    def apply(self, modify_list: [[]], report_list: [[]]):
+        """
+        :param modify_list: list of lists of strings to be modified
+        :param report_list: list of lists of strings to be reported
+        :return:
+        """
+        for i in range(len(modify_list)):
+            report_list[i][0] = (self.get_moderation(modify_list[i][0]), modify_list[i][0])
+        return min([i[0] for i in report_list])
 
-
-        for doc in response.completion:
-            moderation = self.get_moderation(doc)
-            logprobs = moderation["choices"][0]["logprobs"]["top_logprobs"][0]
-            output_label = moderation["choices"][0]["text"]
-            response.completion_processed_data.append((moderation_score(moderation, logprobs, output_label),doc))
-
-
-
-
-class ModerateProcessorOld(LLMProcessor):
-    def apply(self, request: LLMRequest, response: LLMResponse):
-        return min(
-            moderate_maybe(request),
-            moderate_maybe(response)
-        )
-
-
-def moderate_maybe(data_in):
-    """given an LLMRequest or LLMResponse, moderate the response and return -1 if it has been moderated"""
-
-    if data_in.__class__ == LLMRequest:
-        if data_in.prompt:
-            content_to_classify_list = [data_in.prompt]
-
-            def data_setter(x):
-                setattr(data_in, "prompt", x[0])
-
-        elif data_in.query:
-            content_to_classify_list = data_in.documents
-
-            def data_setter(x):
-                setattr(data_in, "documents", x)
-    elif data_in is None:
-        return 0
-
-    elif data_in.__class__ == LLMResponse:
-        if data_in.completion is not None:
-            content_to_classify_list = [i.text for i in data_in.completion]
-        else:
-            content_to_classify_list = [data_in.raw_response]
-
-        def data_setter(x):
-            setattr(data_in, "completion", x)
-    else:
-        print("Error: data_in is not a LLMRequest or LLMResponse")
-
-    label_content_tuples = []
-    for content_to_classify in content_to_classify_list:
-        response = openai.Completion.create(
-            engine="content-filter-alpha",
-            prompt="<|endoftext|>" + content_to_classify + "\n--\nLabel:",
-            temperature=0,
-            max_tokens=1,
-            top_p=0,
-            logprobs=10
-        )
-
-        output_label = response["choices"][0]["text"]
-        logprobs = response["choices"][0]["logprobs"]["top_logprobs"][0]
-        output_label = moderation_score(logprobs, output_label)
-        label_content_tuples.append((output_label, content_to_classify))
-
-    if False: # not len(label_content_tuples) > 1:
-        output_label = label_content_tuples[0][0]
-        if output_label != "2":
-            return 0
-        else:
-            data_setter("non moderate response or reqeust")
-            return -1
-    else:
-
-        outlist = []
-        danger=0
-        for score, content in label_content_tuples:
-            if score == "2":
-                outlist.append("-= non moderate =-")
-                danger = danger-1
+class MinimumLengthProcessor(LLMReqResProcessor):
+    def apply(self, modify_list: [[]], report_list: [[]]):
+        """
+        :param modify_list: list of lists of strings to be modified
+        :param report_list: where to store the results
+        :return: None
+        """
+        for i in range(len(modify_list)):
+            if len(modify_list[i][0]) < 10:
+                report_list[i][0] = (0, modify_list[i][0])
             else:
-                outlist.append(content)
-        data_setter(outlist)
-        return danger
+                report_list[i][0] = (-1, modify_list[i][0])
 
+        return min([i[0] for i in report_list])
 
-class MinimumLengthProcessor(LLMProcessor):
-    def apply(self, request: LLMRequest, response: LLMResponse):
-        return filter_response_for_minimum_length(response)
-
-
-class FactualProcessor(LLMProcessor):
-    """provides completion_processed_data of the form {factual_processor: [(score, completion), ...]} and
+class FactualProcessor(LLMReqResProcessor):
+    """provides text_processed_data of the form {factual_processor: [(score, text_a,text_b), ...]} and
      sorts it by score"""
+    ## todo: change the output to be a dict of dicts ie. "factual_processor": {"apple":{"banna":0.5}, ...}
+    ## will enable acess as request.<whatever>.<whatever>["<name given to this>"]["apple"]["banna"] for similarity
 
-    def __init__(self, name: str = "unnamed filter",similarity_provider="spacy"):
+    def __init__(self, name: str = "unnamed filter", similarity_provider="spacy"):
         super().__init__(name)
         self.similarity_provider = similarity_provider
 
         if self.similarity_provider == "spacy":
             import spacy
             self.similarity_provider_spacey = spacy.load("en_core_web_md")
-            self.similarity_provider_func = lambda x,y: \
+            self.similarity_provider_func = lambda x, y: \
                 self.similarity_provider_spacey(x).similarity(self.similarity_provider_spacey(y))
 
-    def apply(self, request: LLMRequest, response: LLMResponse):
-        response.completion_processed_data["factual_processor"] = [(filter_factual(self.similarity_provider_func,
-                                                                                  request.prompt,
-                                                                                  c),c) for c in response.completion]
-        response.completion_processed_data["factual_processor"] = sorted(response.completion_processed_data["factual_processor"], key=lambda x: x[0], reverse=True)
+    def processor_func(self, data_to_modify: list[list], report_to_list: list[list]):
+        pass
 
-        return filter_factual(self.similarity_provider_func,request, response)
+    def apply(self, modify_list: [[]], report_list: [[]]):
+        """
+        :param modify_list: list of lists of strings to be modified
+        :param report_list: where to store the results
+        :return: None
+        """
 
+        for i in range(len(modify_list)):
+            report_list[i][0] = (filter_factual(self.similarity_provider_func,
+                                                modify_list[0][0],
+                                                modify_list[i][0]),
+                                 modify_list[0][0],
+                                 modify_list[i][0])
+
+        return min([i[0][0] for i in report_list])
 
 def moderation_score(logprobs, output_label):
     # This is the probability at which we evaluate that a "2" is likely real
@@ -174,22 +116,10 @@ def moderation_score(logprobs, output_label):
     return output_label
 
 
-def filter_factual(sim_func, prompt: str, response: str ):
-
+def filter_factual(sim_func, prompt: str, response: str):
     sim = sim_func(prompt, response)
-    print(f'sim: {sim} for {prompt.prompt} and {response.completion}')
+    print(f'sim: {sim} for {prompt} and {response}')
 
     if sim > 0.4:
         return -1 * sim
-    return 1
-
-
-def filter_response_for_minimum_length(response: LLMResponse):
-    """
-    filter responses that are too short
-    :param response: the response to filter
-    :return: negative score if the response is too short, otherwise a positive score
-    """
-    if len(response.completion) < 20:
-        return -1
     return 1

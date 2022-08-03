@@ -50,7 +50,7 @@ class StorySquadAI:
                    creative applications, and 0 (argmax sampling) for ones with a well-defined answer.
                        We generally recommend altering this or top_p but not both.
                max_tokens:
-                   The maximum number of tokens to generate in the completion.
+                   The maximum number of tokens to generate in the text.
                    The token count of your prompt plus max_tokens cannot exceed the model's context length. Most models
                    have a context length of 2048 tokens (except davinci-codex, which supports 4096).
                top_p:
@@ -59,7 +59,7 @@ class StorySquadAI:
                    probability mass are considered.
                        We generally recommend altering this or temperature but not both.
                logit_bias:
-                   Modify the likelihood of specified tokens appearing in the completion.
+                   Modify the likelihood of specified tokens appearing in the text.
                    Accepts a json object that maps tokens (specified by their token ID in the GPT tokenizer) to an
                    associated bias value from -100 to 100. You can use this tokenizer tool
                    (which works for both GPT-2 and GPT-3) to convert text to token IDs. Mathematically, the bias is added

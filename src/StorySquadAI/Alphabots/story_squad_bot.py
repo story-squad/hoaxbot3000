@@ -24,24 +24,10 @@ class StorySquadBot:
                                  filters.ModerateProcessor(name='moderate'),
                                  filters.FactualProcessor(name='factual')]
 
-    def nlp_pre_process(self, request: LLMRequest):
-        """
-        apply all processing steps to requests
-
-        """
-        return [(flt.name, flt(request, None)) for flt in self.llm_pre_filters]
-
-    def nlp_post_process(self, request: LLMRequest, response: LLMResponse):
-        """
-        apply all processing steps to requests response pairs
-
-        """
-        return [(flt.name, flt(request, response)) for flt in self.llm_post_filters]
-
     # TODO: make sure to tie bot personality params to choices
     def guess(self, prompt: str, choices: list):
         """
-        structured as {search pick} because {completion result}
+        structured as {search pick} because {text result}
         :param prompt:
         :param choices:
         :return:
@@ -74,9 +60,9 @@ class StorySquadBot:
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
-        return f'{prompt} :: {r_checked.completion}.'
+        return f'{prompt} :: {r_checked.text}.'
 
-    def get_response_and_score(self, request, req_modification_callback=None):
+    def get_response_and_score(self, request,processor_list, req_modification_callback=None):
         """
          an iterator that will get a response and score it
         :param request: the request to get the response for
@@ -88,13 +74,18 @@ class StorySquadBot:
             response = self.llm.completion(kwargs=request)
 
             # list of tuples of (name_of_filter, score)
-            score = self.nlp_post_process(request, response)
-            score.sort(key=lambda x: x[1])
-            score_val = score[0][1]
+
+            score_sources = [i(request,response) for i in processor_list if i.will_handle(request,response)]
+            score_sources += [i(request) for i in processor_list if i.will_handle(request)]
+            score_sources += [i(response) for i in processor_list if i.will_handle(response)]
+
+            score_sources.sort(reverse=True)
+            score_val = score_sources[0]
+
             if score_val.__class__ == int or score_val.__class__ == float:
                 if score_val < 0:
                     if req_modification_callback is not None:
-                        req_modification_callback(score, request)
+                        req_modification_callback(score_val, request)
                     yield score_val, response
                 else:
                     found = True
@@ -114,6 +105,7 @@ class StorySquadBot:
             request.top_p = 0.9
         else:
             request.top_p += 0.1
+        request.top_p = min(1, request.top_p)
         print(f'top_p increased to {request.top_p}')
 
     def thing(self, prompt: str):
@@ -128,13 +120,16 @@ class StorySquadBot:
             stop=["C:"]
         )
 
-        checked = self.nlp_pre_process(req)
+#        checked = self.nlp_pre_process(req)
+
         a = [(score, result) for score, result
-             in self.get_response_and_score(req, self.increase_top_p_callback)]
+             in self.get_response_and_score(processor_list=[filters.FactualProcessor(name='factual')],
+                                            request=req,
+                                            req_modification_callback= self.increase_top_p_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
-        return r_checked.completion
+        return r_checked.text
 
     def movie(self, movie: str):
         response_name = 'movie'
@@ -153,7 +148,7 @@ class StorySquadBot:
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
-        return r_checked.completion
+        return r_checked.text
 
     def person(self, person: str):
         response_name = "person"
@@ -172,4 +167,4 @@ class StorySquadBot:
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
-        return r_checked.completion
+        return r_checked.text
