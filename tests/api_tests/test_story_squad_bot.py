@@ -7,6 +7,11 @@ from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse
 
 nlp = spacy.load("en_core_web_md")
 
+def test_short_length_filter():
+    # TODO: create test LLM in LLMWrapper
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "data")
+    api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='test')
 
 def test_thing():
     this_dir = os.getenv("STORYSQUADAI_PATH")
