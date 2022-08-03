@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 def print_basic_offline_diagnoses(bot: str, verbose=0):
-    _hoax_ai = StorySquadAI(data_dir="../../Alphabots/data//")
+    _hoax_ai = StorySquadAI(data_dir="../../data//")
     _bot = _hoax_ai.create_bot_with_personality(bot)
 
     ## context doc diagnostics

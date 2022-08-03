@@ -47,7 +47,7 @@ class ConvertJsonToNewBot:
             "movie": f"C: Movie: {q_token}?\n{r_token}\n\n",
             "person": f"C: Who is/was {q_token}?\n{r_token}\n\n",
         }
-        self.SSAI = StorySquadAI(data_dir="../../../Alphabots/data//")
+        self.SSAI = StorySquadAI(data_dir="../../../data//")
         self.default_response_params = yaml.load(self.SSAI.default_yaml, Loader)
 
         self.personality = StorySquadAI.Personality(responses=
@@ -78,7 +78,7 @@ class SupervisedIterative:
                            "person": {item[1] for item in _query_list},
                            "movie": {item[2] for item in _query_list}}
         del _query_list
-        self.hoax_ai = StorySquadAI(data_dir="../../../Alphabots/data//")
+        self.hoax_ai = StorySquadAI(data_dir="../../../data//")
         self.results = {}
         with open("movies_popular_real_300.txt", "r") as f:
             self.query_movies_popular_list = f.read().splitlines()

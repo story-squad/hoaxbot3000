@@ -6,12 +6,11 @@ import os
 import openai
 import yaml
 import platform
-from StorySquadAI import filters
 from StorySquadAI import StorySquadBot
 from StSqLLMWrapper.llmwrapper import LLMWrapper
 
 from yaml import CLoader as Loader
-from StorySquadAI.Alphabots.exceptions import StorySquadAIException
+from StorySquadAI.exceptions import StorySquadAIException
 from StorySquadAI.Alphabots.bot_context_loaders import load_context_doc, is_context_loader_supported
 
 openai.api_key = os.getenv("OPENAI_API_KEY")

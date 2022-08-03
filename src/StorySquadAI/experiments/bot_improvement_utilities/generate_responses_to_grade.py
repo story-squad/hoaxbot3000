@@ -35,7 +35,7 @@ def get_responses_for_bot_for_query_list(bot, query_list):
 
 
 def create_save_bot_results_for_bot(query_list: [(str, str, str)], bot: str, number: int = 1, engine: str = "ada"):
-    _hoax_ai = StorySquadAI(data_dir="../../Alphabots/data//")
+    _hoax_ai = StorySquadAI(data_dir="../../data//")
     _bot = _hoax_ai.create_bot_with_personality(bot)
     _bot.engine_to_use = engine
     _bot_results, _bot_embeddings, _ = \
@@ -68,7 +68,7 @@ def get_extended_query_list():
 
 
 if __name__ == "__main__":
-    HoaxAI = StorySquadAI(data_dir="../../Alphabots/data//")
+    HoaxAI = StorySquadAI(data_dir="../../data//")
 
     which_bot = input("Which bot? ")
     query_list = get_extended_query_list()
