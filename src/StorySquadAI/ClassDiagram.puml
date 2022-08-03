@@ -1,0 +1,116 @@
+@startuml
+allow_mixing
+
+folder HoaxBot3000Repo{
+
+    folder submodules{
+        folder StSq-LLM-Wrapper{
+            package llmwrapper{
+                class LLMResponse
+                class LLMDefaults
+                class OpenaiLLMDefaults
+                class LLMRequest
+                class OpenaiKWArgs
+                class LLMProcessor
+                class LLMWrapper
+            }
+        }
+    }
+
+    folder tests{
+    }
+
+    folder src{
+        package StorySquadAI{
+        file exceptions.py{
+        }
+        package llm_filter{
+            class filter_response_for_minimum_length(LLMProcessor)
+            class moderation_score(LLMProcessor)
+
+        }
+
+        package processed_data_finalizers{
+            class StorySquadBotResponseFinalizer
+            class WordHoaxBotResponseFinalizer
+        }
+        file story_squad_ai.py{
+            class StorySquadAI{
+                    +list_personalities()
+                    +check_personalities()
+                    +create_bot_with_personality()
+                    +load_personality_from_data_dir()
+                    +save_bot()
+                    class Personality
+                    class PersonalityRequestData
+                }
+        }
+            folder Alphabots{
+                file bot_context_loader.py{
+                }
+
+                rectangle notion_interface.py{
+                    class notion_interface
+                }
+
+                file story_squad_bot.py{
+                        class StorySquadBot{
+                            +nlp_pre_process()
+                            +nlp_post_process()
+                            +guess()
+                            +get_response_and_score()
+                            +increase_temperature_callback()
+                            +increase_top_p_callback()
+                            +thing(in req:LLMRequest): str
+                            +movie()
+                            +person()
+                        }
+                        StorySquadBot --> LLMProcessor
+
+
+
+
+            }
+
+            folder data{
+                        folder personality_directory {
+                        file bot.yaml{
+                        }
+                        file bot_context_docs
+                        }
+                        folder other_bot_personalities{
+                        file others
+                        }
+
+            }
+
+            folder experiments{
+            }
+
+            folder WebAPI{
+                rectangle webserver{
+                file app.py {
+                    class app{
+                        }
+                    }
+                }
+            }
+
+        }
+    }
+            llmwrapper.LLMPorcessor <|.. llm_filter._local_processors
+
+}
+
+
+app.py --> StorySquadBot
+'PersonalityRequestData<--personality_directory
+'PersonalityRequestData<--bot_context_docs
+'webserver <--> StorySquadAI
+'StorySquadAI.Personality -- StorySquadBot
+'StorySquadBot -- StorySquadAI
+'PersonalityRequestData -- StorySquadAI
+'notion_interface --> bot.yaml
+
+@enduml
+

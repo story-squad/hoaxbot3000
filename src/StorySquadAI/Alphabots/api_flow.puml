@@ -1,0 +1,40 @@
+@startuml
+
+title "Flow of a LLMRequest"
+
+api -> bot.thing
+bot.thing -> pre_filter
+pre_filter -> bot.thing
+bot.thing -> llmwrapper.completion
+completion -> bot.thing
+bot.thing -> post_filter
+post_filter -> bot.thing
+bot.thing -> finalizer
+finalizer -> bot.thing
+bot.thing -> api
+@enduml
+
+@startuml
+    allow_mixing
+
+    title "structure?"
+    cloud wtf {
+    class LLMProcessor{
+        +apply(req: LLMRequest,res: LLMResponse)
+        #processor_func_single(self,list_or_str):
+        #processor_func_double(self, lst_of_tuples:[()]):
+
+    }
+
+
+    cloud huh{
+        wtf1 -> wtf2
+        wtf2 -> wtf1
+    }
+
+
+    }
+
+    LLMProcessor <|-- factual_processor
+
+@enduml
