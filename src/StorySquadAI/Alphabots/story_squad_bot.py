@@ -62,7 +62,7 @@ class StorySquadBot:
 
         return f'{prompt} :: {r_checked.text}.'
 
-    def get_response_and_score(self, request,processor_list, req_modification_callback=None):
+    def get_response_and_score(self, request, processor_list, req_modification_callback=None):
         """
          an iterator that will get a response and score it
         :param request: the request to get the response for
@@ -75,7 +75,7 @@ class StorySquadBot:
 
             # list of tuples of (name_of_filter, score)
 
-            score_sources = [i(request,response) for i in processor_list if i.will_handle(request,response)]
+            score_sources = [i(request, response) for i in processor_list if i.will_handle(request, response)]
             score_sources += [i(request) for i in processor_list if i.will_handle(request)]
             score_sources += [i(response) for i in processor_list if i.will_handle(response)]
 
@@ -100,7 +100,7 @@ class StorySquadBot:
         print(f'Temperature increased to {request.temperature}')
 
     def increase_top_p_callback(self, score, request):
-        #request.temperature = None
+        # request.temperature = None
         if request.top_p is None:
             request.top_p = 0.9
         else:
@@ -120,12 +120,11 @@ class StorySquadBot:
             stop=["C:"]
         )
 
-#        checked = self.nlp_pre_process(req)
-
         a = [(score, result) for score, result
-             in self.get_response_and_score(processor_list=[filters.FactualProcessor(name='factual')],
+             in self.get_response_and_score(processor_list=[filters.FactualProcessor(name='factual'),
+                                                            filters.MinimumLengthProcessor(name="length")],
                                             request=req,
-                                            req_modification_callback= self.increase_top_p_callback)]
+                                            req_modification_callback=self.increase_top_p_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
@@ -142,7 +141,6 @@ class StorySquadBot:
             stop=["C:"]
         )
 
-        checked = self.nlp_pre_process(req)
         a = [(score, result) for score, result
              in self.get_response_and_score(req, self.increase_temperature_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
@@ -161,7 +159,7 @@ class StorySquadBot:
             stop=["C:"]
         )
 
-        checked = self.nlp_pre_process(req)
+
         a = [(score, result) for score, result
              in self.get_response_and_score(req, self.increase_temperature_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
