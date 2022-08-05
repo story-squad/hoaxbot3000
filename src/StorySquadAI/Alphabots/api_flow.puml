@@ -1,17 +1,90 @@
 @startuml
+title "Execution flow of a LLMRequest"
 
-title "Flow of a LLMRequest"
 
-api -> bot.thing
-bot.thing -> pre_filter
-pre_filter -> bot.thing
-bot.thing -> llmwrapper.completion
+
+group execution
+box exec
+participant web_api
+participant completion
+participant finalizer
+
+autonumber
+web_api -> bot.thing
+bot.thing -> completion
+return
+completion -> LLMResponse
+return
 completion -> bot.thing
-bot.thing -> post_filter
-post_filter -> bot.thing
 bot.thing -> finalizer
 finalizer -> bot.thing
-bot.thing -> api
+bot.thing -> web_api
+end box
+end
+
+
+box combined
+participant "bot.thing"
+end box
+
+newpage
+group DFD: Context
+box "data flow members"
+participant context_loader
+autonumber
+context_document -> context_loader
+context_loader -> bot.thing
+bot.thing -> bot.thing.handle_contextdoc_ver
+bot.thing.handle_contextdoc_ver ->bot.thing
+bot.thing -> web_api
+end box
+end
+
+group DFD: Prompt
+autonumber
+web_api -> bot.thing:request
+bot.thing -> LLMRequest: package into LLMRequest
+return validated LLMRequest
+bot.thing -> score: score function collects results on porcessors by calling them on the LLMRequest
+score -> processors: modify the request directly
+return: provides scores on if the req fails
+score --> bot.thing: [ [score, LLMRequest], ... ]
+bot.thing --> web_api: logic in bot.thing returns early or not
+end
+
+group DFD
+group DFD: Prompt (proposed)
+autonumber
+web_api -> bot.thing:request from web_api
+bot.thing -> LLMRequest: package into LLMRequest
+return validated LLMRequest
+bot.thing -> score: score function collects results on porcessors by calling them on the LLMRequest
+score -> processors: modify the request directly
+return: provides scores on if the req fails
+score --> bot.thing: provide data like [ [score, LLMRequest], ... ]
+
+end
+
+group DFD: LLMResponse
+autonumber
+LLMResponse -> score
+score -> processors: each processor scores the response
+return returns data about the response, and modifies the response
+score --> bot.thing:list of scores and complete data of scoring per response from the web_api
+end
+end
+
+
+group using Request and Response data from bot.thing
+bot.thing --> finalizer: finalizers exsist in the bot\nand are specific for each\nendpoint
+return: resolved decision
+bot.thing --> web_api: [textual response, ... ]
+end
+
+box external
+participant LLMResponse
+end box
+
 @enduml
 
 @startuml
@@ -36,5 +109,22 @@ bot.thing -> api
     }
 
     LLMProcessor <|-- factual_processor
+
+@startuml
+
+!pragma teoz true
+box a
+participant Bob
+box b
+participant Alice
+participant John
+end box
+
+end box
+participant Other
+
+Bob -> Alice : hello
+Alice -> John : hello
+John -> Other: Hello
 
 @enduml
