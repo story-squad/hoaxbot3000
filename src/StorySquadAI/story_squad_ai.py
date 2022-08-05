@@ -43,7 +43,7 @@ class StorySquadAI:
     class PersonalityRequestData:
         """
                The following is a list of recommended args to pass to the openai api, you can however pass any of the other
-               args supported by openai as kwargs
+               args supported by openai as req
 
                temperature:
                    What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more

@@ -11,11 +11,21 @@ def test_short_length_filter():
     # TODO: create test LLM in LLMWrapper
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "data")
+    def test_response_creator(prompt,req):
+        # yield responses that are too short 9 times and then yield a long response
+        for i in range(9):
+            yield LLMResponse(text=[f"short {i}"])
+        yield LLMResponse(text=["This is a sentence that is long enough to pass."])
+
+
     test_llm_wrapper = LLMWrapper('test',
-                                  req_test_func=lambda x: True,
-                                  res_test_func=lambda x: True
+                                  completion_test_generator= test_response_creator(None,None),
                                   )
-    api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='test')
+    api = StorySquadAI(data_dir=this_data_dir,llm_provider_str="test",llmwrapper=test_llm_wrapper)
+    bubble_testbot = api.create_bot_with_personality("bubblebot_v1")
+    result = bubble_testbot.thing("apple")
+    result = result[0]
+    assert len(result) > 10
 
 def test_thing():
     this_dir = os.getenv("STORYSQUADAI_PATH")

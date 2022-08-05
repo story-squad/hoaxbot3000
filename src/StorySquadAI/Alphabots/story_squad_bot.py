@@ -71,7 +71,7 @@ class StorySquadBot:
         """
         found = False
         for _ in range(10):
-            response = self.llm.completion(kwargs=request)
+            response = self.llm.completion(req=request)
 
             # list of tuples of (name_of_filter, score)
 

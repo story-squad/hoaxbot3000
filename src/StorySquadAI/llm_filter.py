@@ -39,9 +39,9 @@ class MinimumLengthProcessor(LLMReqResProcessor):
         """
         for i in range(len(modify_list)):
             if len(modify_list[i][0]) < 10:
-                report_list[i][0] = (0, modify_list[i][0])
+                report_list[i][0] = (-1.0, modify_list[i][0])
             else:
-                report_list[i][0] = (-1, modify_list[i][0])
+                report_list[i][0] = (+0.0, modify_list[i][0])
 
         return min([i[0][0] for i in report_list])
 
