@@ -11,6 +11,10 @@ def test_short_length_filter():
     # TODO: create test LLM in LLMWrapper
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "data")
+    test_llm_wrapper = LLMWrapper('test',
+                                  req_test_func=lambda x: True,
+                                  res_test_func=lambda x: True
+                                  )
     api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='test')
 
 def test_thing():

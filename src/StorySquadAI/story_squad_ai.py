@@ -89,19 +89,21 @@ class StorySquadAI:
     def init_error(self, e):
         raise Exception(e)
 
-    def __init__(self, llm_provider_str, data_dir=f"./data", **kwargs):
+    def __init__(self,llm_provider_str, data_dir=f"./data", *, llmwrapper: LLMWrapper = None):
+        if not llmwrapper:
+            ## string normalization
+            if "openai" in llm_provider_str:
+                self.llm_provider_str = "openai"
+            elif "test" in llm_provider_str:
+                self.llm_provider_str = "test"
 
-        ## string normalization
-        if "openai" in llm_provider_str:
-            self.llm_provider_str = "openai"
-        elif "test" in llm_provider_str:
-            self.llm_provider_str = "test"
-
-        ## assignment based on normalized strings
-        if self.llm_provider_str == "openai":
-            self.llm_wrap = LLMWrapper(api_name="openai", completion_model_name="text-babbage-001")
-        if self.llm_provider_str == "test":
-            self.llm_wrap = LLMWrapper(api_name="test")
+            ## assignment based on normalized strings
+            if self.llm_provider_str == "openai":
+                self.llm_wrap = LLMWrapper(api_name="openai", completion_model_name="text-babbage-001")
+            if self.llm_provider_str == "test":
+                self.llm_wrap = LLMWrapper(api_name="test")
+        else:
+            self.llm_wrap = llmwrapper
 
         # self.data_dir = os.path.realpath(data_dir)
         self.data_dir = data_dir
