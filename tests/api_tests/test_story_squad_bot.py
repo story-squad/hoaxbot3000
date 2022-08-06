@@ -11,21 +11,22 @@ def test_short_length_filter():
     # TODO: create test LLM in LLMWrapper
     this_dir = os.getenv("STORYSQUADAI_PATH")
     this_data_dir = os.path.join(this_dir, "data")
-    def test_response_creator(prompt,req):
+
+    def test_response_creator(prompt, req):
         # yield responses that are too short 9 times and then yield a long response
         for i in range(9):
             yield LLMResponse(text=[f"short {i}"])
         yield LLMResponse(text=["This is a sentence that is long enough to pass."])
 
-
     test_llm_wrapper = LLMWrapper('test',
-                                  completion_test_generator= test_response_creator(None,None),
+                                  completion_test_generator=test_response_creator(None, None),
                                   )
-    api = StorySquadAI(data_dir=this_data_dir,llm_provider_str="test",llmwrapper=test_llm_wrapper)
+    api = StorySquadAI(data_dir=this_data_dir, llm_provider_str="test", llmwrapper=test_llm_wrapper)
     bubble_testbot = api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.thing("apple")
     result = result[0]
     assert len(result) > 10
+
 
 def test_thing():
     this_dir = os.getenv("STORYSQUADAI_PATH")
@@ -34,6 +35,7 @@ def test_thing():
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.thing("apple")
     assert len(result) > 0
+
 
 def test_unsupported_bot_context_type_should_fail():
     old = os.environ["STORYSQUADAI_PATH"]
@@ -62,6 +64,7 @@ def test_unsupported_bot_context_type_should_fail():
 
     # reset the environment variable to the old value
     os.environ["STORYSQUADAI_PATH"] = old
+
 
 def test_llm_wrapper_install():
     llmw = LLMWrapper('openai')
@@ -98,7 +101,7 @@ def test_movie():
 
 def test_person():
     this_dir = os.getenv("STORYSQUADAI_PATH")
-    this_data_dir = os.path.join(this_dir,  "data")
+    this_data_dir = os.path.join(this_dir, "data")
     hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.person("Bob")
@@ -107,7 +110,7 @@ def test_person():
 
 def test_guess():
     this_dir = os.getenv("STORYSQUADAI_PATH")
-    this_data_dir = os.path.join(this_dir,  "data")
+    this_data_dir = os.path.join(this_dir, "data")
     hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
     bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v1")
     result = bubble_testbot.guess("what is an apple?", ["a juicy red or green fruit",
