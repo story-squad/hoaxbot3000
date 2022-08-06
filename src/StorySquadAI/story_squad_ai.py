@@ -84,6 +84,7 @@ class StorySquadAI:
             a dict of PersonalityRequestData objects
         """
         name: str
+        context_doc_format_ver: int
         responses: dict[str, 'StorySquadAI.PersonalityRequestData']
 
     def init_error(self, e):
@@ -180,15 +181,15 @@ class StorySquadAI:
             # if the personality exists
             if personality in self.personalities:
                 ctx_dir = os.path.join(self.personalities_dir, personality)
-                personality = self.load_personality_from_data_dir(personality, create_new=True)
-                return StorySquadBot(data_dir=ctx_dir, personality=personality, llmwrapper_for_bot=self.llm_wrap)
+                personality_out = self.load_personality_from_data_dir(personality, create_new=True)
+                return StorySquadBot(data_dir=ctx_dir, personality=personality_out, llmwrapper_for_bot=self.llm_wrap)
 
     def load_personality_from_data_dir(self, personality: str, create_new=False) -> 'StorySquadAI.Personality':
         yaml_file_path = os.path.join(self.personalities_dir, personality, "bot.yaml")
-        responses = load_context_doc(yaml_file_path)
+        responses,ver = load_context_doc(yaml_file_path)
         for response_type in responses:
             responses[response_type] = StorySquadAI.PersonalityRequestData(**responses[response_type])
-        return StorySquadAI.Personality(name=personality, responses=responses)
+        return StorySquadAI.Personality(name=personality,context_doc_format_ver=ver, responses=responses)
 
     def save_bot(self, bot: StorySquadBot, overwrite: bool = False):
         # create directory
