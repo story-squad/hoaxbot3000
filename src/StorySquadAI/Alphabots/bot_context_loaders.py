@@ -71,11 +71,11 @@ class TextContextLoaderV1(DefaultContextLoader):
     def reshape_context_doc(self, context_doc):
         sections = context_doc.split("\n\n")
         out = []
-        for i,section in enumerate(sections):
+        for i, section in enumerate(sections):
             lines = section.splitlines()
-            if (len(lines) != 2) and(len(sections) != i+1):
+            if (len(lines) != 2) and (len(sections) != i + 1):
                 raise StorySquadAIException(f"Invalid context doc format: {context_doc}")
-            if len(sections) != i+1:
+            if len(sections) != i + 1:
                 out.append("C: " + "[CONTEXT_PROMPT_TOKEN]")
                 out.append(lines[1])
         return "\n".join(out)
@@ -88,9 +88,10 @@ class TextContextLoaderV1(DefaultContextLoader):
         return responses
 
 
-def load_context_doc(yaml_path: str):
+def load_context_doc(yaml_path: str) -> (dict, int):
     """
-    loads a context doc using the correct loader
+    returns a context doc using the correct loader, as well as the version of the loader used
+
     """
 
     config = yaml.load(open(yaml_path, encoding="utf-8", mode="r"), loader)
