@@ -115,7 +115,7 @@ def load_context_doc(yaml_path: str) -> (dict, int):
         for l in list_of_loaders}
 
     loader_class = supported[use_type_code]
-    return loader_class(yaml_path).load_context()
+    return loader_class(yaml_path).load_context(),use_type_code
 
 
 def is_context_loader_supported(type_code_int):
