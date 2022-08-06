@@ -7,6 +7,23 @@ from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse
 
 nlp = spacy.load("en_core_web_md")
 
+def test_bot_fact_recall_filter():
+    """
+    test that the bot does not re iterate the known definition
+    """
+    this_dir = os.getenv("STORYSQUADAI_PATH")
+    this_data_dir = os.path.join(this_dir, "data")
+    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
+    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v7")
+
+    result = bubble_testbot.thing("apple")
+
+    p_nlp = nlp("apple")
+    r_nlp = nlp(result[0])
+    similarity = p_nlp.similarity(r_nlp)
+    print(result)
+    assert similarity < 0.4
+
 def test_short_length_filter():
     # TODO: create test LLM in LLMWrapper
     this_dir = os.getenv("STORYSQUADAI_PATH")
@@ -71,24 +88,6 @@ def test_llm_wrapper_install():
     response = llmw.completion('what is a snuffleupagus?')
     assert type(response) is LLMResponse
     assert type(response.text[0]) is str
-
-def test_bot_fact_recall_filter():
-    """
-    test that the bot does not re iterate the known definition
-    """
-    this_dir = os.getenv("STORYSQUADAI_PATH")
-    this_data_dir = os.path.join(this_dir, "data")
-    hoax_api = StorySquadAI(data_dir=this_data_dir, llm_provider_str='openai')
-    bubble_testbot = hoax_api.create_bot_with_personality("bubblebot_v7")
-
-    result = bubble_testbot.thing("apple")
-
-    p_nlp = nlp("apple")
-    r_nlp = nlp(result[0])
-    similarity = p_nlp.similarity(r_nlp)
-    print(result)
-    assert similarity < 0.4
-
 
 def test_movie():
     this_dir = os.getenv("STORYSQUADAI_PATH")
