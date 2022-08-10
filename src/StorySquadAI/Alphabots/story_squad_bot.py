@@ -41,15 +41,30 @@ class StorySquadBot:
         :param choices:
         :return:
         """
-        req = LLMRequest(documents=choices, query=prompt)
-        checked = self.nlp_pre_process(req)
-        result = self.llm.search(req)
+
+        proc_list_search = [
+            filters.ModerateProcessor(name='moderate')
+        ]
+
+        proc_list_completion = [
+            filters.MinimumLengthProcessor(name="length"),
+            filters.ModerateProcessor(name='moderate'),
+        ]
+
+        search_req = LLMRequest(documents=choices, query=prompt)
+        search_results = [(score, result) for score, result
+                          in self.get_response_and_score(processor_list=proc_list_search,
+                                                         request=search_req,
+                                                         req_modification_callback=self.increase_top_p_callback)]
+
+        search_results.sort(key=lambda x: x[0], reverse=True)
+        search_chosen_response = search_results[0][1]
 
         preferred_place = 1  # index 0 is the highest similarity
-        pick = result[min(preferred_place, len(result) - 1)]
+        pick = search_chosen_response.text[min(preferred_place, len(search_chosen_response.text) - 1)]
 
         context = ".".join(choices)
-        prompt = f"I'm going to go with {pick[1]} because"
+        prompt = f"I'm going to go with {pick} because"
 
         kwargs = {
             "prompt": prompt,
@@ -62,14 +77,19 @@ class StorySquadBot:
             "presence_penalty": 0,
             "stop": "."
         }
-        request = LLMRequest(**kwargs)
-        checked = self.nlp_pre_process(request)
+        completion_request = LLMRequest(**kwargs)
 
-        a = [(score, result) for score, result in self.get_response_and_score(request)]
-        a.sort(key=lambda x: x[0], reverse=True)
-        r_checked = a[0][1]
+        #completion_request = LLMRequest(documents=choices, query=prompt)
+        completion_results = [(score, result) for score, result
+                              in self.get_response_and_score(processor_list=proc_list_completion,
+                                                             request=completion_request,
+                                                             req_modification_callback=self.increase_top_p_callback)]
 
-        return f'{prompt} :: {r_checked.text}.'
+
+        completion_results.sort(key=lambda x: x[0], reverse=True)
+        search_chosen_response = completion_results[0][1]
+
+        return f'{prompt} {search_chosen_response.text[0]}.'
 
     def get_response_and_score(self, request, processor_list, req_modification_callback=None):
         """
@@ -80,15 +100,20 @@ class StorySquadBot:
         """
         found = False
         for _ in range(10):
-            response = self.llm.completion(req=request)
-
+            if len(request.prompt) != 0:
+                response = self.llm.completion(req=request)
+            elif len(request.query) != 0:
+                response = self.llm.search(request)
             # list of tuples of (name_of_filter, score)
 
-            score_sources = [i(request, response) for i in processor_list if i.will_handle(request, response)]
+            score_sources = [
+                i(request, response) for i in processor_list
+                if i.will_handle(request, response)
+            ]
             score_sources += [i(request) for i in processor_list if i.will_handle(request)]
             score_sources += [i(response) for i in processor_list if i.will_handle(response)]
 
-            score_sources.sort(reverse=True)
+            score_sources.sort()
             score_val = score_sources[0]
 
             if score_val.__class__ == int or score_val.__class__ == float:
@@ -120,8 +145,14 @@ class StorySquadBot:
     def thing(self, prompt: str):
         response_name = "thing"
 
+        proc_list = [
+            filters.FactualProcessor(name='factual'),
+            filters.MinimumLengthProcessor(name="length"),
+            filters.ModerateProcessor(name='moderate'),
+        ]
+
         req = LLMRequest(
-            context=self.personality.responses[response_name].context_doc,
+            context=self.personality.responses[response_name].context_doc(prompt),
             prompt=f'C: what is {prompt}?\n',
             temperature=self.personality.responses[response_name].temperature,
             max_tokens=self.personality.responses[response_name].max_tokens,
@@ -130,8 +161,7 @@ class StorySquadBot:
         )
 
         a = [(score, result) for score, result
-             in self.get_response_and_score(processor_list=[filters.FactualProcessor(name='factual'),
-                                                            filters.MinimumLengthProcessor(name="length")],
+             in self.get_response_and_score(processor_list=proc_list,
                                             request=req,
                                             req_modification_callback=self.increase_top_p_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
@@ -141,8 +171,15 @@ class StorySquadBot:
 
     def movie(self, movie: str):
         response_name = 'movie'
+
+        proc_list = [
+            filters.FactualProcessor(name='factual'),
+            filters.MinimumLengthProcessor(name="length"),
+            filters.ModerateProcessor(name='moderate'),
+        ]
+
         req = LLMRequest(
-            context=self.personality.responses[response_name].context_doc,
+            context=self.personality.responses[response_name].context_doc(movie),
             prompt=f'C: Movie: {movie}?\n',
             temperature=self.personality.responses[response_name].temperature,
             max_tokens=self.personality.responses[response_name].max_tokens,
@@ -151,7 +188,9 @@ class StorySquadBot:
         )
 
         a = [(score, result) for score, result
-             in self.get_response_and_score(req, self.increase_temperature_callback)]
+             in self.get_response_and_score(processor_list=proc_list,
+                                            request=req,
+                                            req_modification_callback=self.increase_top_p_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
@@ -159,8 +198,15 @@ class StorySquadBot:
 
     def person(self, person: str):
         response_name = "person"
+
+        proc_list = [
+            filters.FactualProcessor(name='factual'),
+            filters.MinimumLengthProcessor(name="length"),
+            filters.ModerateProcessor(name='moderate'),
+        ]
+
         req = LLMRequest(
-            context=self.personality.responses[response_name].context_doc,
+            context=self.personality.responses[response_name].context_doc(person),
             prompt=f'C: Who is/was {person}?\n',
             temperature=self.personality.responses[response_name].temperature,
             max_tokens=self.personality.responses[response_name].max_tokens,
@@ -168,9 +214,10 @@ class StorySquadBot:
             stop=["C:"]
         )
 
-
         a = [(score, result) for score, result
-             in self.get_response_and_score(req, self.increase_temperature_callback)]
+             in self.get_response_and_score(processor_list=proc_list,
+                                            request=req,
+                                            req_modification_callback=self.increase_top_p_callback)]
         a.sort(key=lambda x: x[0], reverse=True)
         r_checked = a[0][1]
 
