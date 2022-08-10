@@ -7,6 +7,7 @@ import numpy as np
 from numpy.linalg import norm
 from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest
 from StorySquadAI import filters
+from StorySquadAI.Alphabots.bot_context_processors import get_processor
 
 
 class StorySquadBot:
@@ -19,10 +20,18 @@ class StorySquadBot:
         self.context_dir = data_dir
         self.engine_to_use = engine
         self.nlp_eng_med = spacy.load("en_core_web_md")
-        self.llm_pre_filters = [filters.ModerateProcessor(name='moderate')]
-        self.llm_post_filters = [filters.MinimumLengthProcessor(name="length"),
-                                 filters.ModerateProcessor(name='moderate'),
-                                 filters.FactualProcessor(name='factual')]
+        self.assign_context_providers()
+
+    def assign_context_providers(self):
+        """
+        process the context docs for the bot
+        :return:
+        """
+        # process personality context docs
+        # self.personality.context_docs = {}
+        for name, doc in self.personality.responses.items():
+            f = get_processor(self.personality.context_doc_format_ver)(doc.context_doc).processor
+            self.personality.responses[name].context_doc = f
 
     # TODO: make sure to tie bot personality params to choices
     def guess(self, prompt: str, choices: list):
