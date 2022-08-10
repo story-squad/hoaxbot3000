@@ -56,7 +56,7 @@ six==1.16.0
 sklearn==0.0
 smart-open==5.2.1
 sniffio==1.2.0
-spacy==3.3.1
+spacy==3.4.1
 spacy-alignments==0.8.5
 spacy-legacy==3.0.9
 spacy-loggers==1.0.2
@@ -64,7 +64,7 @@ SQLAlchemy==1.4.31
 srsly==2.4.3
 starlette==0.17.1
 -e ./src
-thinc==8.0.17
+thinc==8.1.0
 threadpoolctl==3.0.0
 tokenizers==0.12.1
 tomli==2.0.1
