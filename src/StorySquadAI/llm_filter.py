@@ -1,5 +1,5 @@
 from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest, \
-    LLMReqResProcessor, LLMResProcessor, LLMReqResProcessor
+    LLMReqResProcessor, LLMResProcessor, LLMReqResProcessor, LLMReqProcessor
 import openai
 
 
@@ -17,7 +17,7 @@ class ModerateProcessor(LLMReqResProcessor):
         )
         logprobs = moderation["choices"][0]["logprobs"]["top_logprobs"][0]
         output_label = moderation["choices"][0]["text"]
-        r = moderation_score(logprobs, output_label)
+        r = -moderation_score(logprobs, output_label)
         return r
 
     def apply(self, modify_list: [[]], report_list: [[]]):
@@ -28,7 +28,7 @@ class ModerateProcessor(LLMReqResProcessor):
         """
         for i in range(len(modify_list)):
             report_list[i][0] = (self.get_moderation(modify_list[i][0]), modify_list[i][0])
-        return min([i[0] for i in report_list])
+        return min([i[0][0] for i in report_list])
 
 class MinimumLengthProcessor(LLMReqResProcessor):
     def apply(self, modify_list: [[]], report_list: [[]]):
@@ -80,7 +80,8 @@ class FactualProcessor(LLMReqResProcessor):
                 modify_list[0][0],
                 modify_list[i][0])
 
-        return min([i[0][0] for i in report_list])
+        return min([i[0][0] for i in report_list if i[0] is not None])
+
 
 def moderation_score(logprobs, output_label):
     # This is the probability at which we evaluate that a "2" is likely real
