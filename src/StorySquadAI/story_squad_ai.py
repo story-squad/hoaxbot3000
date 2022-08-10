@@ -1,5 +1,7 @@
 # coding=utf8
 # from __future__ import annotations
+import shutil
+import typing
 from dataclasses import dataclass
 import glob
 import os
@@ -192,8 +194,20 @@ class StorySquadAI:
         return StorySquadAI.Personality(name=personality,context_doc_format_ver=ver, responses=responses)
 
     def save_bot(self, bot: StorySquadBot, overwrite: bool = False):
+        """
+        :param bot: the bot to save
+        :param overwrite: to overwrite existing bot
+        :return: None
+        """
         # create directory
-        os.mkdir(os.path.join(self.data_dir, "personalities", bot.name))
+        try:
+            os.mkdir(os.path.join(self.data_dir, "personalities", bot.name))
+        except FileExistsError:
+            if overwrite:
+                shutil.rmtree(os.path.join(self.data_dir, "personalities", bot.name))
+                os.mkdir(os.path.join(self.data_dir, "personalities", bot.name))
+            else:
+                raise StorySquadAIException("bot directory already exists")
 
         # create bot.yaml
         yaml_file_name = os.path.join(self.data_dir, "personalities", bot.name, "bot.yaml")
@@ -210,5 +224,9 @@ class StorySquadAI:
         for k, v in bot.personality.responses.items():
             context_file_name = os.path.join(self.data_dir, "personalities", bot.name, f"{k}.context.txt")
             print(context_file_name)
-            with open(context_file_name, "w", encoding="utf-8") as f:
-                f.write(v.context_doc)
+            if bot.personality.context_doc_format_ver == 0:
+                with open(context_file_name, "w", encoding="utf-8") as f:
+                    f.write(v.context_doc(""))
+            if bot.personality.context_doc_format_ver == 1:
+                with open(context_file_name, "w", encoding="utf-8") as f:
+                    f.write(v.context_doc("[CONTEXT_PROMPT_TOKEN]"))
