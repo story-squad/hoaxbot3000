@@ -45,9 +45,11 @@ class MinimumLengthProcessor(LLMReqResProcessor):
 
         return min([i[0][0] for i in report_list])
 
+
 class FactualProcessor(LLMReqResProcessor):
     """provides text_processed_data of the form {factual_processor: [(score, text_a,text_b), ...]} and
      sorts it by score"""
+
     ## todo: change the output to be a dict of dicts ie. "factual_processor": {"apple":{"banna":0.5}, ...}
     ## will enable acess as request.<whatever>.<whatever>["<name given to this>"]["apple"]["banna"] for similarity
 
@@ -71,12 +73,12 @@ class FactualProcessor(LLMReqResProcessor):
         :return: None
         """
 
-        for i in range(len(modify_list)):
-            report_list[i][0] = (filter_factual(self.similarity_provider_func,
-                                                modify_list[0][0],
-                                                modify_list[i][0]),
-                                 modify_list[0][0],
-                                 modify_list[i][0])
+        for i in range(1,len(modify_list)):
+            report_list[i-1][0] = (filter_factual(self.similarity_provider_func,
+                                modify_list[0][0],
+                                modify_list[i][0]),
+                modify_list[0][0],
+                modify_list[i][0])
 
         return min([i[0][0] for i in report_list])
 
@@ -113,7 +115,7 @@ def moderation_score(logprobs, output_label):
     # this should be set as unsafe
     if output_label not in ["0", "1", "2"]:
         output_label = "2"
-    return output_label
+    return int(output_label)
 
 
 def filter_factual(sim_func, prompt: str, response: str):
