@@ -75,7 +75,7 @@ class StorySquadAI:
         max_tokens: float
         top_p: float
         logit_bias: dict
-        context_doc: str
+        context_doc: typing.Callable
 
     @dataclass
     class Personality:
