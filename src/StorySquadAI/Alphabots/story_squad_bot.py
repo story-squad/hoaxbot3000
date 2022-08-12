@@ -9,7 +9,7 @@ from StSqLLMWrapper.llmwrapper import LLMWrapper, LLMResponse, LLMRequest
 from StorySquadAI import filters
 from StorySquadAI.Alphabots.bot_context_processors import get_processor
 
-
+# TODO: make StorySquadBot as a composable class, composed of the bots context, filters, and individual endpoints
 class StorySquadBot:
     def __init__(self, personality, llmwrapper_for_bot: LLMWrapper, data_dir: str = "data",
                  engine='curie', moderate: bool = True):
@@ -34,7 +34,7 @@ class StorySquadBot:
             self.personality.responses[name].context_doc = f
 
     # TODO: make sure to tie bot personality params to choices
-    def guess(self, prompt: str, choices: list):
+    def guess(self, prompt: str, choices: list,correct_defenition: str=None):
         """
         structured as {search pick} because {text result}
         :param prompt:
@@ -147,7 +147,7 @@ class StorySquadBot:
         response_name = "thing"
 
         proc_list = [
-            filters.FactualProcessor(name='factual'),
+            filters.FactualProcessor(name='factual', correct_definition=correct_definition),
             filters.MinimumLengthProcessor(name="length"),
             filters.ModerateProcessor(name='moderate'),
         ]
@@ -170,11 +170,11 @@ class StorySquadBot:
 
         return r_checked.text
 
-    def movie(self, movie: str):
+    def movie(self, movie: str,correct_definition: str=None):
         response_name = 'movie'
 
         proc_list = [
-            filters.FactualProcessor(name='factual'),
+            filters.FactualProcessor(name='factual',correct_definition=correct_definition),
             filters.MinimumLengthProcessor(name="length"),
             filters.ModerateProcessor(name='moderate'),
         ]
@@ -197,11 +197,11 @@ class StorySquadBot:
 
         return r_checked.text
 
-    def person(self, person: str):
+    def person(self, person: str,correct_definition: str=None):
         response_name = "person"
 
         proc_list = [
-            filters.FactualProcessor(name='factual'),
+            filters.FactualProcessor(name='factual',correct_definition=correct_definition),
             filters.MinimumLengthProcessor(name="length"),
             filters.ModerateProcessor(name='moderate'),
         ]
