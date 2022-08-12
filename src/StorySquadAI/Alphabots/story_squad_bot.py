@@ -142,7 +142,8 @@ class StorySquadBot:
         request.top_p = min(1, request.top_p)
         print(f'top_p increased to {request.top_p}')
 
-    def thing(self, prompt: str):
+
+    def thing(self, prompt: str,correct_definition: str=None):
         response_name = "thing"
 
         proc_list = [

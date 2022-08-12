@@ -30,6 +30,7 @@ class ModerateProcessor(LLMReqResProcessor):
             report_list[i][0] = (self.get_moderation(modify_list[i][0]), modify_list[i][0])
         return min([i[0][0] for i in report_list])
 
+
 class MinimumLengthProcessor(LLMReqResProcessor):
     def apply(self, modify_list: [[]], report_list: [[]]):
         """
