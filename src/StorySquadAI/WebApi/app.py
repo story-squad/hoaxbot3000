@@ -49,11 +49,11 @@ def get_db():
 
 
 def setup():
-    web_api_dir = os.getenv("STORYSQUADAI_PATH")
-    alphabot_data_dir = os.path.join(web_api_dir, "Alphabots", "data")
-    web_api_dir = os.path.join(web_api_dir, "WebApi")
+    stsq_path = os.getenv("STORYSQUADAI_PATH")
+    personality_data_dir = os.path.join(stsq_path, "data")
+    web_api_path = os.path.join(stsq_path, "WebApi")
 
-    hoax_api = StorySquadAI(data_dir=alphabot_data_dir,llm_provider_str="openai")
+    hoax_api = StorySquadAI(data_dir=personality_data_dir, llm_provider_str="openai")
 
     app = FastAPI()
 
