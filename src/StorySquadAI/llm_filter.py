@@ -79,10 +79,12 @@ class FactualProcessor(LLMReqResProcessor):
 
         nouns_x = [token.text for token in x_doc if token.pos_ == "NOUN"]
         nouns_y = [token.text for token in y_doc if token.pos_ == "NOUN"]
-        nouns_sim_list = [(self.basic_similarity_func(x, y), x, y) for x in nouns_x for y in nouns_y]
-        nouns_sim = max(nouns_sim_list)[0]
-        return (nouns_sim * 0.75) + (basic_sim * 0.25)
-        # return max(basic_sim,nouns_sim)
+        if nouns_x != [] and nouns_y != []:
+            nouns_sim_list = [(self.basic_similarity_func(x, y), x, y) for x in nouns_x for y in nouns_y]
+            nouns_sim = max(nouns_sim_list)[0]
+            return (nouns_sim * 0.75) + (basic_sim * 0.25)
+        else:
+            return basic_sim
 
     def processor_func(self, data_to_modify: list[list], report_to_list: list[list]):
         pass
