@@ -24,6 +24,7 @@ class BotName(str, Enum):
     bubblebot_v4 = 'bubblebot_v4',
     bubblebot_v5 = 'bubblebot_v5',
     bubblebot_v6 = 'bubblebot_v6',
+    bubblebot_v7 = 'bubblebot_v7',
     buzzkillbot_v1 = 'buzzkillbot_v1',
     buzzkillbot_v2 = 'buzzkillbot_v2',
     originaltestbot_v1 = 'originaltestbot_v1',
@@ -31,6 +32,7 @@ class BotName(str, Enum):
     buzzkillbot = 'buzzkillbot',
     originaltestbot = 'originaltestbot',
     Alphabot = 'Alphabot'
+
 
 alias = {
     "bubblebot": "Alphabot"
