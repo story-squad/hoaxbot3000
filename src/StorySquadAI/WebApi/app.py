@@ -130,6 +130,30 @@ def record_response(response: schemas.ResponseRecord, db: Session = Depends(get_
     crud.create_response(db=db, record=response)
 
 
+@app.post("/wordhoax/", response_model=schemas.ResponseRecord)
+def wordhoax(word_hoax_prompt: schemas.word_hoax_prompt):
+    word_hoax_valid_endpoints = ["thing", "movie", "person","guess"]
+    if word_hoax_prompt.def_type not in word_hoax_valid_endpoints:
+        return {"error": "Invalid def_type"}
+    else:
+        bot_name = handle_bot_name(word_hoax_prompt.bot_name)
+
+        if word_hoax_prompt.api_key == "zetabot":
+            #output = bots[bot_name].thing(word_hoax_prompt.prompt, correct_definition=word_hoax_prompt.correct_definition)
+            output = bots[bot_name].__getattribute__(word_hoax_prompt.def_type)(
+                word_hoax_prompt.prompt,
+                correct_definition=word_hoax_prompt.correct_definition
+            )
+            out = {
+                "id":-1,
+                "is_bot":True,
+                "response":output[0]
+            }
+            return out
+        else:
+            return "not authorized"
+
+
 @app.get("/", response_class=HTMLResponse)
 async def root_path():
     html = """
