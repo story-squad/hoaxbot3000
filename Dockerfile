@@ -9,6 +9,7 @@ ENV OPENAI_API_KEY=${OPENAI_API_KEY}
 
 WORKDIR /
 COPY ./src /src
+COPY ./submodules /submodules
 COPY ./requirements.txt /requirements.txt
 RUN pip install --no-cache-dir --upgrade -r /requirements.txt
 CMD ["uvicorn", "src.StorySquadAI.WebApi.app:app", "--host", "0.0.0.0", "--port", "4564"]
