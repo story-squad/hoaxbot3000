@@ -64,6 +64,7 @@ SQLAlchemy==1.4.31
 srsly==2.4.3
 starlette==0.17.1
 -e ./src
+-e ./submodules/StSq-LLM-Wrapper/src/
 thinc==8.1.0
 threadpoolctl==3.0.0
 tokenizers==0.12.1
