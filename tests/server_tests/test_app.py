@@ -12,6 +12,33 @@ import requests
 test_client = TestClient(app.app)
 
 
+def detached_process(process_command: str):
+    # !/usr/bin/env python
+    import os
+    import sys
+    import platform
+    from subprocess import Popen, PIPE
+
+    # set system/version dependent "start_new_session" analogs
+    kwargs = {}
+    if platform.system() == 'Windows':
+        # from msdn [1]
+        CREATE_NEW_PROCESS_GROUP = 0x00000200  # note: could get it from subprocess
+        CREATE_NEW_PROCESS_GROUP = subprocess.CREATE_NEW_PROCESS_GROUP
+        DETACHED_PROCESS = 0x00000008  # 0x8 | 0x200 == 0x208
+        DETACHED_PROCESS = subprocess.DETACHED_PROCESS
+        kwargs.update(creationflags=DETACHED_PROCESS | CREATE_NEW_PROCESS_GROUP)
+    elif sys.version_info < (3, 2):  # assume posix
+        kwargs.update(preexec_fn=os.setsid)
+    else:  # Python 3.2+ and Unix
+        kwargs.update(start_new_session=True)
+
+    p = Popen(process_command, stdin=PIPE, stdout=PIPE, stderr=PIPE, **kwargs)
+
+    print(f'poll:{p.poll()}')
+    return p
+
+
 def read_procfile(path: str):
     """
     Reads a Procfile and returns a dictionary of process name to command
@@ -47,7 +74,7 @@ def test_heroku_deployment_should_serve():
     procfile_dir = find_file_in_parent_dirs("Procfile", ".", 10)
     assert procfile_dir != -1
     web_command = read_procfile(procfile_dir)["web"]
-    assert uvicorn_tester(web_command, working_dir=procfile_dir, port="8080", app_name="app") == 0
+    assert uvicorn_tester(web_command, working_dir=procfile_dir, port="7888", app_name="app") == 0
 
 
 def test_setup():
@@ -56,12 +83,15 @@ def test_setup():
 
 
 def uvicorn_tester(uvicorn_command, working_dir, port="8080", app_name="app"):
+    working_dir = os.path.abspath(working_dir)
     os.chdir(working_dir)
     uvicorn_command = uvicorn_command.replace("$PORT", port)
     uvicorn_command += " > uvi_test.out"
     print("\nExecuting command: " + uvicorn_command + "\n")
     try:
-        proc_uvicorn = subprocess.Popen(uvicorn_command)
+        proc_uvicorn = detached_process(uvicorn_command)
+        #proc_uvicorn = subprocess.Popen(uvicorn_command)
+
         print("\nUvicorn command has executed successfully.\n")
         try:
             # responds when the server is up

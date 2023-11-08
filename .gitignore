@@ -2,3 +2,4 @@
 /venv/
 /.env
 /src/StorySquadAI/data/personalities/test_save_bot/
+/src/build/
