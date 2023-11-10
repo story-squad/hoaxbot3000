@@ -17,8 +17,8 @@ pip install -r requirements.txt
 HoaxBot3000 integrates several components for seamless AI operations:
 
 - `LLMWrapper`: Manages communication with OpenAI's language models, essential for the `StorySquadBot` functionality.
-- `StorySquadBot`: Orchestrates the AI personalities, offering personalized and context-aware conversations.
-- `StorySquadAI`: The backbone of AI functionalities.
+- `StorySquadBot`: Orchestrates the AI personalities.
+- `StorySquadAI`: The backbone of AI functionalities and is intended for use as a foundation for Story Squad's AI projects.
 - `WebApi`: Provides a web interface for interacting with the AI.
 - `Experiments`: Facilitates the structuring of data science and ML experiments.
 
