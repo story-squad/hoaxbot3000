@@ -38,6 +38,9 @@ bot = StorySquadBot(personality=your_personality, llmwrapper_for_bot=llmwrapper)
 response = bot.thing(prompt='Tell me about the Eiffel Tower.')
 print(response)
 ```
+### Testing
+
+Unit tests and fixtures are located in /tests
 
 ### Starting the Web API
 
